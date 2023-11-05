@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
 import Amis from '../models/amis.js';
+import UserRoles from '../models/userRoles.js';
+
 // Use the `config` method to load environment variables from the .env file
 
 dotenv.config();
@@ -81,11 +83,32 @@ export async function createAccount(req,res){
   });
   }
 }
-// Function for user authentication 
 
 export async function authentificateUser(req, res) {
   try {
     const data = req.body;
+
+    // Check if the provided email and password match the admin credentials from .env
+    if (
+      data.email === 'mr.djebbi@gmail.com' &&
+      data.password === process.env.ADMIN_PASSWORD
+    ) {
+      // Admin authentication
+      const payload = {
+        _id: 'admin_id', // Replace 'admin_id' with the desired admin user ID
+        username: 'admin', // Set the username for admin
+        email: 'mr.djebbi@gmail.com', // Use the fixed email for admin
+        password: process.env.ADMIN_PASSWORD, // Use the admin password from .env
+        Role: UserRoles.ADMIN, // Add Role information for admin
+      };
+
+      const apiKey = process.env.SECRET_KEY;
+      const token = jwt.sign(payload, apiKey);
+
+      return res.status(200).send({ token, apiKey });
+    }
+
+    // If not admin, perform user authentication
     const user = await User.findOne({ email: data.email });
 
     if (!user) {
@@ -100,10 +123,10 @@ export async function authentificateUser(req, res) {
 
     const payload = {
       _id: user._id,
-
       username: user.UserName,
       email: user.email,
-      password: user.password
+      password: user.password,
+      Role: user.UserRoles.CLIENT, // Add Role information for the user
     };
 
     const apiKey = process.env.SECRET_KEY;
