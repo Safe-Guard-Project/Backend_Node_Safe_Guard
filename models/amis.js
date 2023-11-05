@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model, Types } = mongoose;
 
-const userSchema = new Schema(
+const amisSchema = new Schema(
     {
         nomAmis: {
             type: String,
@@ -18,4 +18,4 @@ const userSchema = new Schema(
     }
 );
 
-export default model("User", userSchema);
+export default model("Amis", amisSchema);
