@@ -1,7 +1,6 @@
 import express from "express";
 import {
-  AjouterInformation, getAllInformation, getOnceInfprmation, UpdateInforation, deleteOnceInformation, deleteAllInformation,
-} from "../controllers/informationControlleers.js"
+  AjouterInformation, getAllInformation, getOnceInformation, UpdateInforation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControlleers.js"
 import multer from "../middlewares/multer-config.js";
 
 const router = express.Router();
@@ -14,7 +13,7 @@ router
 
 router
   .route("/:Titre")
-  .get(getOnceInfprmation)
+  .get(getOnceInformation)
   .delete(deleteOnceInformation);
 
 router.route("/:_id").put(multer,UpdateInforation);
