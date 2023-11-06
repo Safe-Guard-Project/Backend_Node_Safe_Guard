@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  AjouterInformation, getAllInformation, getOnceInformation, UpdateInforation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControlleers.js"
+  AjouterInformation, getAllInformation, getOnceInformation, UpdateInformation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControlleers.js"
 import multer from "../middlewares/multer-config.js";
 
 const router = express.Router();
@@ -16,6 +16,6 @@ router
   .get(getOnceInformation)
   .delete(deleteOnceInformation);
 
-router.route("/:_id").put(multer,UpdateInforation);
+router.route("/:_id").put(multer,UpdateInformation);
 
 export default router;
