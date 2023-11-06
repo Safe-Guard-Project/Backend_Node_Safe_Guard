@@ -1,5 +1,7 @@
-
-import TarjetSecurise from '../models/tarjetSecurise.js';
+import TrajetSecurise from '../models/tarjetSecurise.js';
+import User from '../models/user.js';
+import Catastrophe from '../models/catastrophe.js';
+import { body } from 'express-validator';
 
 export function createTarjetSecurise(req, res) {
     const { etat, iduser, idCatastrophe } = req.body;
@@ -11,17 +13,18 @@ export function createTarjetSecurise(req, res) {
 
 
 export function getTarjetSecurises(req, res) {
-    TarjetSecurise.find()
+    TrajetSecurise.find()
         .then(
-            tarjetSecurises => res.status(200).json(tarjetSecurises)
+            TrajetSecurise => res.status(200).json(TrajetSecurise)
             )
         .catch(err => res.status(400).json(err));
 }
 
 
+
 export function updateTrajetSecurise(req, res) {
     const trajetId = req.params.id;
-    TarjetSecurise.findByIdAndUpdate(trajetId, req.body)
+    TrajetSecurise.findByIdAndUpdate(trajetId, req.body)
         .then((updatedTrajet) => {
             res.status(200).json(updatedTrajet);
         })
@@ -34,7 +37,7 @@ export function updateTrajetSecurise(req, res) {
 
 export function deleteTrajetSecurise(req, res) {
     const trajetId = req.params.id;
-    TarjetSecurise.findByIdAndDelete(trajetId)
+    TrajetSecurise.findByIdAndDelete(trajetId)
         .then(() => {
             res.status(200).send();
         })
@@ -51,4 +54,4 @@ export function getCatastropheRadius(req, res) {
         .catch((err) => {
             res.status(400).json({ error: err.message });
         });
-}
+    }
