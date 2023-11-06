@@ -1,5 +1,6 @@
 import Programme from "../models/programme.js";
 export function AjouterProgramme(req, res) {
+ 
   Programme.create({
     Titre: req.body.Titre,
     descriptionProgramme: req.body.descriptionProgramme,
@@ -30,12 +31,17 @@ export function getOnceProg(req, res) {
     })
     .catch((err) => {
       res.status(500).json({ error: err });
-    });
+    })
 }
 
 export function UpdateProg(req, res) {
+  const { _id } = req.params;
+  const updatedProgrammeData = req.body;
+  if (req.file) {
+    updatedProgrammeData.image = `${req.protocol}://${req.get("host")}/img/${req.file.filename}`// Mettez à jour le chemin de l'image si une nouvelle image est fournie
+  }
     
-  Programme.findByIdAndUpdate(req.params._id, req.body)
+  Programme.findByIdAndUpdate(_id, updatedProgrammeData )
     .then((doc) => {
       res.status(200).json(doc);
     })

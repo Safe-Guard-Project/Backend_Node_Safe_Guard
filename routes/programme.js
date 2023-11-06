@@ -22,6 +22,6 @@ router
   .get(getOnceProg)
   .delete(deleteOnceProg);
 
-router.route("/:_id").put(UpdateProg);
+router.route("/:_id").put(multer,UpdateProg);
 
 export default router;
