@@ -3,7 +3,10 @@ import mongoose from 'mongoose'
 import morgan from 'morgan';
 import cors from 'cors';
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
-import trajetSecuriseRoutes from './routes/tarjetSecuriseRoute.js'
+import trajetSecuriseRoutes from './routes/tarjetSecuriseRoute.js';
+import commentairesInformationRoute from './routes/commentairesInformationRoute.js';
+import notificationRoute from './routes/notificationRoute.js';
+import informationRoute from './routes/informationRoute.js';
 const app = express() 
 const hostname = '127.0.0.1'; 
 const port=process.env.PORT || 9090 
@@ -27,6 +30,10 @@ app.use(express.urlencoded({extended:true}));
 
 
 app.use('/trajetSecurise', trajetSecuriseRoutes);
+app.use('/information',informationRoute);
+app.use('/commentairesinformation', commentairesInformationRoute);
+app.use('/notification', notificationRoute);
+
 
 app.use(notFoundError);
 app.use (errorHandler);

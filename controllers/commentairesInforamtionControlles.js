@@ -1,5 +1,5 @@
-import commentairesInformation from "../models/commentairesInformation";
-import  CommentairesInformation  from "../models/commentairesInformation";
+import commentairesInformation  from "../models/commentairesInformation.js"
+
 
 export function addCommentInfo(req, res) {
   CommentairesInformation.create({

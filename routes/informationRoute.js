@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  AjouterInformation, getAllInformation, getOnceInformation, UpdateInformation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControlleers.js"
+  AjouterInformation, getAllInformation, getOnceInformation, UpdateInformation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControllers.js"
 import multer from "../middlewares/multer-config.js";
 
 const router = express.Router();
