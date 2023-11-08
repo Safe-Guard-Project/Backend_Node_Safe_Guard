@@ -1,6 +1,5 @@
 import express from "express";
-import {
-  AjouterInformation, getAllInformation, getOnceInformation, UpdateInformation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControllers.js"
+import {AjouterInformation, getAllInformation, getByIdInformation, /*UpdateInformation,*/ deleteOnceInformation, deleteAllInformation} from "../controllers/informationControllers.js"
 import multer from "../middlewares/multer-config.js";
 
 const router = express.Router();
@@ -12,10 +11,14 @@ router
   .delete(deleteAllInformation);
 
 router
-  .route("/:Titre")
-  .get(getOnceInformation)
+  .route("/:_id")
+  .get(getByIdInformation)
   .delete(deleteOnceInformation);
 
-router.route("/:_id").put(multer,UpdateInformation);
+
+
+
+
+//router.route("/:_id").put(multer,UpdateInformation);
 
 export default router;

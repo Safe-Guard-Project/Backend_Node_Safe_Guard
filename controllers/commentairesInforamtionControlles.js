@@ -1,21 +1,33 @@
 import commentairesInformation  from "../models/commentairesInformation.js"
-
-
 export function addCommentInfo(req, res) {
-  CommentairesInformation.create({
+
+  information.create({
+  //idUser:req.body.idUser,
+  //idInformation: req.body.idInformation,
+descriptionCommentaire: req.body.descriptionCommentaire
+    .then((newcommentInformation) => {
+      res.status(200).json(newcomenntInformation);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    })
+  })
+}
+/*export function addCommentInfo(req, res) {
+  commentairesInformation.create({
     idUser:req.body.idUser ,
     idInformation: req.body.idInformation ,
     descriptionCommentaire: req.body.descriptionCommentaire})
-    .then((newProg) => {
-      res.status(200).json(newProg);
+    .then((newcommentairesInformation) => {
+      res.status(200).json(newcommentairesInformation);
     })
     .catch((err) => {
       res.status(500).json({ error: err });
     });
-}
+}*/
 
 export function getAllCommentInfo(req, res) {
-  CommentairesInformation.find({})
+  commentairesInformation.find({})
     .then((docs) => {
       res.status(200).json(docs);
     })
@@ -26,7 +38,7 @@ export function getAllCommentInfo(req, res) {
 
 export function getOnceCommentInfo(req, res) {
     
-  CommentairesInformation.findById({_id : req.params._id})
+  commentairesInformation.findById({_id : req.params._id})
     .then((docs) => {
       res.status(200).json(docs);
     })
@@ -38,7 +50,7 @@ export function getOnceCommentInfo(req, res) {
 
 export function UpdateCInfo(req, res) {
    
-    CommentairesInformation.findByIdAndUpdate(req.params._id, req.body)
+  commentairesInformation.findByIdAndUpdate(req.params._id, req.body)
         .then((updatedComment) => {
             res.status(200).json(updatedComment);
         })
@@ -49,7 +61,7 @@ export function UpdateCInfo(req, res) {
 
 
 export function deleteAllcommentInfo(req, res) {
-  CommentairesInformation.deleteMany({})
+  commentairesInformation.deleteMany({})
     .then((docs) => {
       res.status(200).json(docs);
     })
