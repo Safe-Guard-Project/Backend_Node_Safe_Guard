@@ -8,9 +8,9 @@ router
     .route('/')
     .get(getZoneDeDangers)
     .post(
-        body('latitude').isNumeric(),
-        body('longitude').isNumeric(),
-        body('idUser').isNumeric(),
+        body('idUser').isMongoId(),
+        body('latitudeDeZoneDanger').isNumeric(),
+        body('longitudeDeZoneDanger').isNumeric(),
         createZoneDeDanger);
 
 router.route('/:id')

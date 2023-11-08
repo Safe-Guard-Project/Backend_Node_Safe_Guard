@@ -18,9 +18,8 @@ export function getZoneDeDangers(req, res) {
 
 
 export function getZoneDeDangersByCatastropheRadius(req, res) {
-    const { latitudeDeCatastrophe, longitudeDeCatastrophe, radius } = req.body;
+    const { latitudeDeCatastrophe, longitudeDeCatastrophe, radius } = req.query;
 
-    // Validate inputs
     if (isNaN(longitudeDeCatastrophe) || isNaN(radius)) {
         return res.status(400).json({ error: 'Invalid input: longitude and radius must be numbers' });
     }
