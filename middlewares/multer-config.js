@@ -30,3 +30,4 @@ export default multer({
  
   limits: { fileSize: 50 * 1024 * 1024 },
 }).single("source"); 
+//array("source",10)
