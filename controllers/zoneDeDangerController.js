@@ -1,14 +1,13 @@
-import e from "express";
-import zoneDeDanger from "../models/zoneDeDanger";  
+import zoneDeDanger from "../models/zoneDeDanger.js";
+  
 
 export function createZoneDeDanger(req, res) {
-    const { latitude, longitude, idCatastrophe } = req.body;
-    const newZoneDeDanger = new zoneDeDanger({ latitude, longitude, idCatastrophe });
+    const { latitudeDeZoneDanger, longitudeDeZoneDanger, idUser } = req.body;
+    const newZoneDeDanger = new zoneDeDanger({ latitudeDeZoneDanger, longitudeDeZoneDanger ,idUser});
     newZoneDeDanger.save()
         .then(savedZoneDeDanger => res.json(savedZoneDeDanger))
         .catch(err => res.status(400).json(err));
 }
-
 export function getZoneDeDangers(req, res) {
     zoneDeDanger.find()
         .then(
@@ -16,6 +15,23 @@ export function getZoneDeDangers(req, res) {
             )
         .catch(err => res.status(400).json(err));
 }
+
+
+export function getZoneDeDangersByCatastropheRadius(req, res) {
+    const { latitudeDeCatastrophe, longitudeDeCatastrophe, radius } = req.query;
+
+    if (isNaN(longitudeDeCatastrophe) || isNaN(radius)) {
+        return res.status(400).json({ error: 'Invalid input: longitude and radius must be numbers' });
+    }
+
+    zoneDeDanger.find({
+        latitudeDeZoneDanger: { $gte: latitudeDeCatastrophe - radius, $lte: latitudeDeCatastrophe + radius },
+        longitudeDeZoneDanger: { $gte: longitudeDeCatastrophe - radius, $lte: longitudeDeCatastrophe + radius }
+    })
+    .then(zoneDeDangers => res.json(zoneDeDangers))
+    .catch(err => res.status(400).json(err));
+}
+    
 
 export function updateZoneDeDanger(req, res) {
   zoneDeDanger.findByIdAndUpdate(req.params.id, req.body)
@@ -26,6 +42,7 @@ export function updateZoneDeDanger(req, res) {
             res.status(400).json({ error: err.message });
         });
 }
+
 
 export function deleteZoneDeDanger(req, res) {
     zoneDeDanger.findByIdAndDelete(req.params.id)
