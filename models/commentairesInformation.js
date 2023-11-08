@@ -3,7 +3,7 @@ const { Schema, model, Types } = mongoose;
 
 const commentairesInformationSchema = new Schema(
     {
-        idUser: {
+        /*idUser: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
@@ -12,7 +12,7 @@ const commentairesInformationSchema = new Schema(
             type: Types.ObjectId,
             ref: 'Information',
             required: true
-        },
+        },*/
         descriptionCommentaire: {
             type: String,
             required: true
@@ -23,4 +23,4 @@ const commentairesInformationSchema = new Schema(
     }
 );
 
-export default model("CommentairesInformation", commentairesInformationSchema);
+export default model("commentairesInformation", commentairesInformationSchema);

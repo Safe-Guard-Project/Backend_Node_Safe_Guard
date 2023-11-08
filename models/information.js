@@ -7,11 +7,11 @@ const informationSchema = new Schema(
             type: String,
             required: true
         },
-        idUser: {
+       /* idUser: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
-        },
+        },*/
         pays: {
             type: String,
             required: true
@@ -25,7 +25,7 @@ const informationSchema = new Schema(
             required: true
         },
         dateDePrevention: {
-            type: Date,
+            type: String,
             required: true
         },
         image: {
@@ -46,4 +46,4 @@ const informationSchema = new Schema(
     }
 );
 
-export default model("Information", informationSchema);
+export default model("information", informationSchema);
