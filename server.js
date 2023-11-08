@@ -2,11 +2,16 @@ import express from 'express'
 import mongoose from 'mongoose'
 import morgan from 'morgan';
 import cors from 'cors';
+import programme from './routes/programme.js';
+import commentairesProgramme from "./routes/commentairesProgramme.js";
+import favorie from './routes/favorie.js';
+//import ressourceProgramme from './routes/ressourceProgramme.js';
+import quiz from './routes/quiz.js';
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
 import trajetSecuriseRoutes from './routes/tarjetSecuriseRoute.js'
 const app = express() 
 const hostname = '127.0.0.1'; 
-const port=process.env.PORT || 9090 
+const port=process.env.PORT || 9090
 const databaseName = 'safeguardDB';
 mongoose.set('debug',true);
 mongoose.Promise = global.Promise;
@@ -27,6 +32,12 @@ app.use(express.urlencoded({extended:true}));
 
 
 app.use('/trajetSecurise', trajetSecuriseRoutes);
+//Education
+app.use("/programme", programme);
+app.use("/commentairesProgramme", commentairesProgramme);
+app.use("/favorie", favorie);
+app.use("/quiz",quiz);
+//app.use("/ressourceProgramme",ressourceProgramme);
 
 app.use(notFoundError);
 app.use (errorHandler);

@@ -11,7 +11,7 @@ const programmeSchema = new Schema(
             type: String,
             required: true
         },
-        image: {
+        image:{
             type: String,
             required: true
         }
