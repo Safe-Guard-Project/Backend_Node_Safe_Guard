@@ -25,8 +25,7 @@ const fetchEarthquakeData = async () => {
   
         const catastropheData = {
           titre: title,
-          type: type,
-          tsunami:tsunami,
+          type: tsunami === 1 ? "Tsunami" : "Earthquake",
           description: place,
           date: time,
           radius: Math.pow(10, 0.5 * mag), 

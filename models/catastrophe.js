@@ -9,12 +9,9 @@ const catastropheSchema = new Schema(
         },
         type: {
             type: String,
-            required: true
-        },
-        tsunami: {
-            type: Number,
-            required: true
-        },
+            enum: ['Earthquake', 'Tsunami'],
+            required: true,
+          },
         description: {
             type: String,
             required: true
