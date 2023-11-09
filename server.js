@@ -13,6 +13,9 @@ import zoneDeDangerRoutes from './routes/zoneDeDangerRoute.js';
 import commentairesInformationRoute from './routes/commentairesInformationRoute.js';
 import notificationRoute from './routes/notificationRoute.js';
 import informationRoute from './routes/informationRoute.js';
+import alertRoutes from './routes/alertRoutes.js';
+import catastropheRoutes from './routes/catastropheRoutes.js';
+import usgsRoutes from './routes/usgs_api.js';
 
 const app = express() 
 const hostname = '127.0.0.1'; 
@@ -47,6 +50,10 @@ app.use("/quiz",quiz);
 app.use('/information',informationRoute);
 app.use('/commentairesinformation', commentairesInformationRoute);
 app.use('/notification', notificationRoute);
+
+app.use('/alert', alertRoutes);
+app.use('/catastrophe', catastropheRoutes);
+app.use('/api', usgsRoutes);
 
 app.use(notFoundError);
 app.use (errorHandler);
