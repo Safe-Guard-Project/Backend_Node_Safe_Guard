@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import UserRoles from './userRoles.js';
     const { Schema, model  } = mongoose;
 
     const userSchema = new Schema(
@@ -16,6 +17,12 @@ import mongoose from 'mongoose';
         password: {
             type: String,
             required: true
+        },
+        Role: {
+
+            type:String,
+            enum:Object.values(UserRoles),
+            default:UserRoles.CLIENT
         },
         latitudeDeUser: Number,
         longitudeDeUser: Number,
