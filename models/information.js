@@ -7,11 +7,11 @@ const informationSchema = new Schema(
             type: String,
             required: true
         },
-       /* idUser: {
+      User: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
-        },*/
+        },
         pays: {
             type: String,
             required: true
@@ -25,7 +25,7 @@ const informationSchema = new Schema(
             required: true
         },
         dateDePrevention: {
-            type: String,
+            type: Date,
             required: true
         },
         image: {

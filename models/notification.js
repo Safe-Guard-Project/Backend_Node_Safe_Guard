@@ -3,20 +3,21 @@ const { Schema, model, Types } = mongoose;
 
 const notificationSchema = new Schema(
     {
-       /* idUser: {
+        idUser: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
-        },*/
+        },
         typeNotification: {
             type: String,
+            enum: ['Ongoing', 'Comming'],
             required: true
         },
-       /* idInformation: {
+        idInformation: {
             type: Types.ObjectId,
             ref: 'Information',
             required: true
-        },*/
+        },
         
     }, 
     {

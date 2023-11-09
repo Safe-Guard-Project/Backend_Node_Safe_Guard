@@ -1,6 +1,6 @@
 
 import information from '../models/information.js';
-
+//lesfonctions
 
 export function AjouterInformation(req, res) {
  
@@ -8,7 +8,7 @@ export function AjouterInformation(req, res) {
 
   information.create({
   typeCatastrophe:req.body.typeCatastrophe,
-  //idUser:req.body.idUser,
+  idUser:req.body.idUser,
   pays:req.body.pays,
   region:req.body.region,
   descriptionInformation:req.body.descriptionInformation,
@@ -24,7 +24,7 @@ export function AjouterInformation(req, res) {
       res.status(500).json({ error: err });
     });
 }
-/*function UpdateInformation(req, res) {
+function UpdateInformation(req, res) {
   const informationid = req.params.id;  
     alert.findByIdAndUpdate(req.params.id, req.body)
     .then(UpdateInformation => {
@@ -36,7 +36,7 @@ export function AjouterInformation(req, res) {
     .catch(err => {
       res.status(500).json({ error: err });
     });
-}*/
+}
 /*export function UpdateInformation(req, res) {
   if (!validationResult(req).isEmpty()) {
     res.status(400).json({ error: validationResult(req).array() });

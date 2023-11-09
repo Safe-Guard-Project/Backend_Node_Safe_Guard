@@ -19,6 +19,6 @@ router
 
 
 
-//router.route("/:_id").put(multer,UpdateInformation);
+//router.route("/:_id").put(multer, UpdateInformation);
 
 export default router;

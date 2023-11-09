@@ -2,8 +2,8 @@ import commentairesInformation  from "../models/commentairesInformation.js"
 export function addCommentInfo(req, res) {
 
   information.create({
-  //idUser:req.body.idUser,
-  //idInformation: req.body.idInformation,
+  idUser:req.body.idUser,
+  idInformation: req.body.idInformation,
 descriptionCommentaire: req.body.descriptionCommentaire
     .then((newcommentInformation) => {
       res.status(200).json(newcomenntInformation);
