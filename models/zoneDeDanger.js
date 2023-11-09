@@ -11,8 +11,8 @@ const zoneDeDangerSchema = new Schema(
             type: Number,
             required: true
         },
-        etatDezoneDeDanger: {
-            type: String,
+        idUser: {
+            type: Types.ObjectId,
             required: true
         }
     }, 

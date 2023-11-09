@@ -9,6 +9,16 @@ import { randomBytes } from 'crypto';
 import Amis from '../models/amis.js';
 import UserRoles from '../models/userRoles.js';
 
+import twilio from 'twilio';
+const accountSid = 'ACc0e71b50773720619a9a305d83d9778d'; // Your Twilio Account SID
+const authToken = 'a03baf8d38980649674937e0c130bce6'; // Your Twilio Auth Token
+const verifySid = 'VAece4a5891c0da464781c834ea63a1d18';
+
+const twilioPhoneNumber = '+16106746392'; // Your Twilio phone Number
+const phoneNumber=process.env.PHONE_NUMBER;
+const client = twilio(accountSid, authToken);
+const receiver =process.env.TWILIO_PHONE_NUMBER
+
 // Use the `config` method to load environment variables from the .env file
 
 dotenv.config();
@@ -95,7 +105,7 @@ export async function authentificateUser(req, res) {
     ) {
       // Admin authentication
       const payload = {
-        _id: 'admin_id', // Replace 'admin_id' with the desired admin user ID
+        _id: '1', // Replace 'admin_id' with the desired admin user ID
         username: 'admin', // Set the username for admin
         email: 'mr.djebbi@gmail.com', // Use the fixed email for admin
         password: process.env.ADMIN_PASSWORD, // Use the admin password from .env
@@ -139,6 +149,46 @@ export async function authentificateUser(req, res) {
   }
 }
 
+export async function recoverPasswordByPhoneNumber(req, res) {
+  try {
+    const { phoneNumber } = req.body; // Get the phone number from the request
+
+    if (!phoneNumber) {
+      return res.status(400).json({ error: 'Invalid phone number' });
+    }
+
+    // Generate a unique 4-digit OTP code
+    const otpCode = generateOTP();
+
+    // Send the OTP code to the user's phone number using Twilio
+    const smsSent = await sendOTPWithTwilio(phoneNumber, otpCode);
+    
+    
+    if (smsSent) {
+      process.env.PHONE_OTP = otpCode;
+      res.status(200).json({ message: 'OTP code sent to your phone number' });
+    } else {
+      res.status(500).json({ error: 'Error sending OTP code' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function verifyOTPFromTwilio(req, res) {
+  const phoneOTP = process.env.PHONE_OTP;
+  const requestBody = req.body; // Get the data from the request body
+
+  if (requestBody.otpCode === phoneOTP) {
+    // OTPs match
+    res.json({ status: 'verified' }); // Respond with 'verified' status
+  } else {
+    // OTPs do not match
+    res.json({ status: 'not verified' }); // Respond with 'not verified' status
+  }
+}
+
+
 
 // Function for password recovery
 export function recoverPassword(req, res) {
@@ -173,7 +223,19 @@ function generateOTP() {
   const otp = Math.floor(1000 + Math.random() * 9000);
   return otp.toString();
 }
-
+export async function sendOTPWithTwilio(phoneNumber, otpCode) {
+  try {
+    await client.messages.create({
+      body: `Your OTP code is: ${otpCode}`,
+      from: twilioPhoneNumber,
+      to: phoneNumber,
+    });
+    return true; // Message sent successfully
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    return false; // Message sending failed
+  }
+}
 // Function to send a password reset code email
 function sendPasswordResetCodeEmail(email, resetCode) {
   // Create a Nodemailer transporter with your email service configuration.
@@ -210,6 +272,24 @@ export function validateOTP(req, res) {
 
   // Retrieve the stored reset code from the environment variable
   const storedResetCode = process.env.RESET_CODE;
+
+  if (!storedResetCode) {
+    return res.status(400).json({ error: 'Reset code not found. Please request a new code.' });
+  }
+
+  if (otp !== storedResetCode) {
+    return res.status(400).json({ error: 'Invalid OTP. Please try again.' });
+  }
+
+
+  res.status(200).json({ message: 'OTP is valid.' });
+}
+
+export function validateOTPSms(req, res) {
+  const { otp } = req.body;
+
+  // Retrieve the stored reset code from the environment variable
+  const storedResetCode = process.env.PHONE_OTP;
 
   if (!storedResetCode) {
     return res.status(400).json({ error: 'Reset code not found. Please request a new code.' });

@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import {  createAccount, authentificateUser, displayUserProfile,modifyUserProfile, recoverPassword,validateOTP, changePassword, displayAllUsers, deleteUser, addNearbyFriend, displayNearbyFriends, deleteAccount } from '../controllers/userController.js';
+import {  createAccount, authentificateUser, displayUserProfile,modifyUserProfile, recoverPassword,validateOTP, changePassword, displayAllUsers, deleteUser, addNearbyFriend, displayNearbyFriends, deleteAccount, recoverPasswordByPhoneNumber, validateOTPSms,verifyOTPFromTwilio } from '../controllers/userController.js';
 
 const router = express.Router();
 router
@@ -20,13 +20,17 @@ router
 .delete(deleteUser)
 .get(displayUserProfile)
 .patch(modifyUserProfile)
-
 router 
 .route('/recoverPass')
 .post(recoverPassword)
 router
 .route('/validateOtp')
-.post(validateOTP)
+router
+.route('/recoverPassBySms')
+.post(recoverPasswordByPhoneNumber)
+router
+.route('/verifyOTPFromTwilio')
+.post(verifyOTPFromTwilio)
 router 
 .route('/changePass')
 .post(changePassword)
@@ -34,11 +38,8 @@ router
 .route('/addNearbyFriend')
 .post(addNearbyFriend)
 router
-.route('deleteAccount')
+.route('/deleteAccount')
 .delete(deleteAccount)
-
-
-
 
   
 
