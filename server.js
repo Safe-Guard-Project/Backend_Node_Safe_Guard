@@ -5,8 +5,11 @@ import cors from 'cors';
 import programme from './routes/programme.js';
 import commentairesProgramme from "./routes/commentairesProgramme.js";
 import favorie from './routes/favorie.js';
-//import ressourceProgramme from './routes/ressourceProgramme.js';
+import coursProgramme from './routes/coursProgramme.js';
 import quiz from './routes/quiz.js';
+import questions from './routes/questions.js';
+import choix from './routes/choix.js';
+
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
 import trajetSecuriseRoutes from './routes/tarjetSecuriseRoute.js'
 const app = express() 
@@ -37,7 +40,9 @@ app.use("/programme", programme);
 app.use("/commentairesProgramme", commentairesProgramme);
 app.use("/favorie", favorie);
 app.use("/quiz",quiz);
-//app.use("/ressourceProgramme",ressourceProgramme);
+app.use("/questions",questions);
+app.use("/choix",choix);
+app.use("/cours",coursProgramme);
 
 app.use(notFoundError);
 app.use (errorHandler);

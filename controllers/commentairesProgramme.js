@@ -4,6 +4,7 @@ export function addComment(req, res) {
   CommentairesProgramme.create({
     textCommentaire: req.body.textCommentaire,
     idProgramme: req.body.idProgramme,
+    idUser: req.body.idUser,
   })
     .then((newProg) => {
       res.status(200).json(newProg);

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model, Types } = mongoose;
 
-const ressourceProgrammeSchema = new Schema(
+const coursProgrammeSchema= new Schema(
     {
         video: {
             type: String,
@@ -25,4 +25,4 @@ const ressourceProgrammeSchema = new Schema(
     }
 );
 
-export default model("RessourceProgramme", ressourceProgrammeSchema);
+export default model("CoursProgramme", coursProgrammeSchema);

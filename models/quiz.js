@@ -1,28 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model, Types } = mongoose;
 
-const choixSchema = new Schema(
-    {
-        text: {
-            type: String,
-            required: true
-        },
-        isCorrect: {
-            type: Boolean,
-            required: true
-        }
-    }
-);
 
-const questionsSchema = new Schema(
-    {
-        text: {
-            type: String,
-            required: true
-        },
-        choix: [choixSchema]
-    }
-);
 
 const quizSchema = new Schema(
     {
@@ -30,12 +9,18 @@ const quizSchema = new Schema(
             type: String,
             required: true
         },
-        questions: [questionsSchema],
+        
         idProgramme: {
             type: Types.ObjectId,
             ref: 'Programme',
             required: true
-        }
+        },
+         
+        idQuestion: {
+            type: Types.ObjectId,
+            ref: 'Questions',
+            required: true
+        },
     }, 
     {
         timestamps : true

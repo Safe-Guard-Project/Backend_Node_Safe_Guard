@@ -10,7 +10,12 @@ const commentairesProgrammeSchema = new Schema(
         idProgramme: {
             type: Types.ObjectId,
             ref: 'Programme'
-        }
+        },
+        idUser: {
+            type: Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
     }, 
     {
         timestamps : true
