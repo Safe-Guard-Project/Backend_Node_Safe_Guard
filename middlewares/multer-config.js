@@ -6,8 +6,7 @@ import { fileURLToPath } from "url";
 const MIME_TYPES = {
   "image/jpg": "jpg",
   "image/jpeg": "jpg",
-  "image/png": "png",
-  "video/mp4": "mp4",
+  "image/png": "png"
 };
 
 export default multer({

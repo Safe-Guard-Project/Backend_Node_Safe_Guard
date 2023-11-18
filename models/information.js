@@ -7,11 +7,11 @@ const informationSchema = new Schema(
             type: String,
             required: true
         },
-      User: {
+      /*User: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
-        },
+        },*/
         pays: {
             type: String,
             required: true

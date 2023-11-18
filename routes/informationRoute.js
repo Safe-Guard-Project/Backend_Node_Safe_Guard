@@ -1,5 +1,5 @@
 import express from "express";
-import {AjouterInformation, getAllInformation, getByIdInformation, /*UpdateInformation,*/ deleteOnceInformation, deleteAllInformation} from "../controllers/informationControllers.js"
+import {AjouterInformation, getAllInformation, getByIdInformation,UpdateInformation, deleteOnceInformation, deleteAllInformation} from "../controllers/informationControllers.js"
 import multer from "../middlewares/multer-config.js";
 
 const router = express.Router();
@@ -19,6 +19,6 @@ router
 
 
 
-//router.route("/:_id").put(multer, UpdateInformation);
+router.route("/:id").put(multer, UpdateInformation);
 
 export default router;

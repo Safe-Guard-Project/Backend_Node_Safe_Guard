@@ -5,6 +5,8 @@ import information from '../models/information.js';
 export function AjouterInformation(req, res) {
  
   const dateDePrevention = new Date(req.body.dateDePrevention);
+  const etat = req.body.etat === 0 ? 'Coming' : 'Ongoing';
+
 
   information.create({
   typeCatastrophe:req.body.typeCatastrophe,
@@ -15,7 +17,7 @@ export function AjouterInformation(req, res) {
   image: `${req.protocol}://${req.get("host")}/img/${req.file.filename}`,
   dateDePrevention,
   pourcentageFiabilite: req.body.pourcentageFiabilite,
-  etat: req.body.etat,
+  etat,
   })
     .then((newInformation) => {
       res.status(200).json(newInformation);
@@ -24,7 +26,7 @@ export function AjouterInformation(req, res) {
       res.status(500).json({ error: err });
     });
 }
-function UpdateInformation(req, res) {
+/*function UpdateInformation(req, res) {
   const informationid = req.params.id;  
     alert.findByIdAndUpdate(req.params.id, req.body)
     .then(UpdateInformation => {
@@ -36,61 +38,69 @@ function UpdateInformation(req, res) {
     .catch(err => {
       res.status(500).json({ error: err });
     });
-}
-/*export function UpdateInformation(req, res) {
-  if (!validationResult(req).isEmpty()) {
-    res.status(400).json({ error: validationResult(req).array() });
-  } else {
-    const { information } = req.params;
-
-information
-      .findOne({ information: information })
-      .then((newInformation) => {
-
-
-        if (req.body.typeCatastrophe) {
-          newInformation.typeCatastrophe = req.body.typeCatastrophe;
-        }
-        if (req.body.idUser) {
-          newInformation.idUser = req.body.idUser;
-        }
-        if (req.body.pays) {
-          newInformation.pays = req.body.pays;
-        }
-        if (req.body.region) {
-          newInformation.region = req.body.region;
-        }
-        if (req.body.descriptionInformation) {
-          newInformation.descriptionInformation = req.body.descriptionInformation;
-        }
-        if (req.body.dateDePrevention) {
-          newInformation.dateDePrevention = req.body.dateDePrevention;
-        }
-        if (req.file) {
-          newInformation.image = `${req.protocol}://${req.get("host")}/img/${req.file.filename}`;
-        }
-        if (req.body.pourcentageFiabilite) {
-          newInformation.pourcentageFiabilite = req.body.pourcentageFiabilite;
-        }
-        if (req.body.etat) {
-          newInformation.etat = req.body.etat;
-        }
-information    
-          .save()
-          .then((updatedInformation) => {
-            res.status(200).json(updatedInformation);
-          })
-          .catch((err) => {
-            res.status(500).json({ error: err });
-          });
-      })
-      .catch((err) => {
-        res.status(500).json({ error: err });
-      });
-  }
 }*/
 
-export function getAllInformation(req, res) {
+
+export function UpdateProg(req, res) {
+  const { _id } = req.params;
+  const updatedProgrammeData = req.body;
+  if (req.file) {
+    updatedProgrammeData.image = `${req.protocol}://${req.get("host")}/img/${req.file.filename}`// Mettez à jour le chemin de l'image si une nouvelle image est fournie
+  }
+    
+  Programme.findByIdAndUpdate(_id, updatedProgrammeData )
+    .then((doc) => {
+      res.status(200).json(doc);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
+
+export async function UpdateInformation(req, res) {
+  const {
+    typeCatastrophe,
+    pays,
+    region,
+    dateDePrevention,
+    descriptionInformation,
+    etat,
+    image,
+    pourcentageFiabilite
+  } = req.body;
+
+  if (!typeCatastrophe || !pays || !region || !descriptionInformation || !dateDePrevention || !image || !etat || !pourcentageFiabilite) {
+    return res.status(400).json({ error: "Champs vides !" });
+  }
+
+  try {
+    const updatedInformation = await information.findOneAndUpdate(
+      { _id: req.params.id }, 
+      {
+        typeCatastrophe,
+        pays,
+        region,
+        dateDePrevention,
+        descriptionInformation,
+        etat,
+        image,
+        pourcentageFiabilite
+      },
+      { new: true }
+    );
+
+    if (!updatedInformation) {
+      return res.status(404).json({ error: 'Information not found' });
+    }
+
+    return res.status(200).json({ message: 'Information updated successfully', information: updatedInformation });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to update information' });
+  }
+}
+
+      export function getAllInformation(req, res) {
   information.find({})
     .then((docs) => {
       res.status(200).json(docs);

@@ -7,12 +7,12 @@ const commentairesInformationSchema = new Schema(
             type: Types.ObjectId,
             ref: 'User',
             required: true
-        },
+        },*/
         idInformation: {
-            type: Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Information',
             required: true
-        },*/
+        },
         descriptionCommentaire: {
             type: String,
             required: true
