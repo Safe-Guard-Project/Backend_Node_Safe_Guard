@@ -18,9 +18,9 @@ import catastropheRoutes from './routes/catastropheRoutes.js';
 import usgsRoutes from './routes/usgs_api.js';
 
 // firebase
-var admin = require("firebase-admin");
+import admin from 'firebase-admin';
 
-var serviceAccount = require("./firebase/safeguardapplication-firebase-adminsdk-ye5ve-2d88f6e5d6.json");
+import serviceAccount from './firebase/safeguardapplication-firebase-adminsdk-ye5ve-2d88f6e5d6.json';
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
