@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const MIME_TYPES = {
   "image/jpg": "jpg",
   "image/jpeg": "jpg",
-  "image/png": "png"
+  "image/png": "png",
 };
 
 export default multer({
@@ -29,3 +29,4 @@ export default multer({
  
   limits: { fileSize: 50 * 1024 * 1024 },
 }).single("source"); 
+
