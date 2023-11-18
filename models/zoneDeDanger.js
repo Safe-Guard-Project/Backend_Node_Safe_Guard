@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { Schema, model } = mongoose;
+const { Schema, model ,Types} = mongoose;
 
 const zoneDeDangerSchema = new Schema(
     {
@@ -11,8 +11,8 @@ const zoneDeDangerSchema = new Schema(
             type: Number,
             required: true
         },
-        etatDezoneDeDanger: {
-            type: String,
+        idUser: {
+            type: Types.ObjectId,
             required: true
         }
     }, 
