@@ -17,6 +17,16 @@ import alertRoutes from './routes/alertRoutes.js';
 import catastropheRoutes from './routes/catastropheRoutes.js';
 import usgsRoutes from './routes/usgs_api.js';
 
+// firebase
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./firebase/safeguardapplication-firebase-adminsdk-ye5ve-2d88f6e5d6.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 const app = express() 
 const hostname = '127.0.0.1'; 
 const port=process.env.PORT || 9090
