@@ -1,13 +1,20 @@
 import Choix from "../models/choix.js"
 export function createChoix(req, res) {
-  Choix.create(req.body)
-    .then((newquiz) => {
-      res.status(201).json(newquiz);
+ 
+  Choix.create({
+    text: req.body.text,
+    isCorrect: req.body.isCorrect,
+
+  })
+    .then((newChoix) => {
+      res.status(200).json(newChoix);
     })
-    .catch((error) => {
-      res.status(400).json({ error: error.message });
+    .catch((err) => {
+      res.status(500).json({ error: err });
     });
 }
+
+
 export function getAllChoix(req, res) {
   Choix.find({})
     .then((docs) => {

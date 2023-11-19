@@ -10,6 +10,7 @@ import quiz from './routes/quiz.js';
 import questions from './routes/questions.js';
 import choix from './routes/choix.js';
 
+
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
 import trajetSecuriseRoutes from './routes/tarjetSecuriseRoute.js'
 const app = express() 

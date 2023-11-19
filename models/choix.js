@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { Schema, model, Types } = mongoose;
+const { Schema, model } = mongoose;
 
 const choixSchema = new Schema(
     {
@@ -11,6 +11,9 @@ const choixSchema = new Schema(
             type: Boolean,
             required: true
         }
+    }, 
+    {
+        timestamps : true
     }
 );
 

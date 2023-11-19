@@ -7,12 +7,13 @@ const questionsSchema = new Schema(
             type: String,
             required: true
         },
-        
+        /*
         idChoix: {
             type: Types.ObjectId,
             ref: 'Choix',
             required: true
         },
+        */
        
     }
 );

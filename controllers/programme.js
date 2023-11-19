@@ -2,10 +2,9 @@ import Programme from "../models/programme.js";
 export function AjouterProgramme(req, res) {
  
   Programme.create({
-    idUser: req.body.idUser,
     Titre: req.body.Titre,
     descriptionProgramme: req.body.descriptionProgramme,
-    image: `${req.protocol}://${req.get("host")}/img/${req.files.filename}`,
+    image: `${req.protocol}://${req.get("host")}/img/${req.file.filename}`,
   })
     .then((newProg) => {
       res.status(200).json(newProg);
