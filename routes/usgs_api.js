@@ -1,8 +1,14 @@
 import express from 'express'
-import { saveEarthquakeDataToDatabase } from '../controllers/usgs_api.js';
+import { saveEarthquakeDataToDatabase, processNewCatastrophesAndNotifyUsers } from '../controllers/usgs_api.js';
 
 const router = express.Router();
 
-router.get('/fetch_save', saveEarthquakeDataToDatabase);
+router
+.route('/fetch_save')
+.get(saveEarthquakeDataToDatabase);
+
+router
+.route('/send')
+.get(processNewCatastrophesAndNotifyUsers);
 
 export default router;

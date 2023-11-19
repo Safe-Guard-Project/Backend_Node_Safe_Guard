@@ -1,5 +1,7 @@
 import axios from "axios";
 import Catastrophe from '../models/catastrophe.js';
+import { getUsersInCatastropheRadius } from '../controllers/catastropheController.js'
+import { sendNotificationToUser } from "./firebase.js";
 import mongoose from "mongoose";
 
 const fetchEarthquakeData = async () => {
@@ -41,5 +43,31 @@ const fetchEarthquakeData = async () => {
       console.error('Failed to fetch and save earthquake data:', error);
     }
   };
+
+  const processNewCatastrophesAndNotifyUsers = async () => {
+    try {
+      // Fetch and save earthquake data to the database
+      await saveEarthquakeDataToDatabase();
   
-  export { saveEarthquakeDataToDatabase };
+      // Retrieve the newly saved catastrophes
+      const newCatastrophes = await Catastrophe.find();
+  
+      // Iterate through each new catastrophe
+      for (const newCatastrophe of newCatastrophes) {
+        // Fetch users within the radius of the new catastrophe
+        const usersInRadius = await getUsersInCatastropheRadius(newCatastrophe);
+  
+        // Send notifications to users
+        for (const user of usersInRadius) {
+          sendNotificationToUser(user, newCatastrophe);
+        }
+      }
+      console.log('Processing and notifying users completed successfully');
+    } catch (error) {
+      console.error('Error processing new catastrophes:', error);
+    }
+  };
+  
+  export { saveEarthquakeDataToDatabase,
+    processNewCatastrophesAndNotifyUsers
+  };
