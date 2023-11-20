@@ -4,7 +4,7 @@ export function AjouterProgramme(req, res) {
   Programme.create({
     Titre: req.body.Titre,
     descriptionProgramme: req.body.descriptionProgramme,
-    image: `${req.protocol}://${req.get("host")}/img/${req.file.filename}`,
+    image: `${req.file.filename}`,
   })
     .then((newProg) => {
       res.status(200).json(newProg);

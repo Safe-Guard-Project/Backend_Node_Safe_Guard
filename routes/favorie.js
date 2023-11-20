@@ -1,4 +1,3 @@
-
 import { addFav, deleteAll, deleteOnceFav } from "../controllers/favorie.js";
 import express from "express";
 const router = express.Router();

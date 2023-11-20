@@ -1,13 +1,13 @@
 import  CommentairesProgramme  from "../models/commentairesProgramme.js";
 
 export function addComment(req, res) {
+ 
   CommentairesProgramme.create({
-    textCommentaire: req.body.textCommentaire,
-    idProgramme: req.body.idProgramme,
-    idUser: req.body.idUser,
+    textComment: req.body.textComment,
+    idCoursProgramme: req.body.idCoursProgramme,
   })
-    .then((newProg) => {
-      res.status(200).json(newProg);
+    .then((newCommnt) => {
+      res.status(200).json(newCommnt);
     })
     .catch((err) => {
       res.status(500).json({ error: err });
