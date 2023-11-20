@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import UserRoles from './userRoles.js';
     const { Schema, model  } = mongoose;
 
     const userSchema = new Schema(
@@ -19,10 +18,9 @@ import UserRoles from './userRoles.js';
             required: true
         },
         Role: {
-
             type:String,
-            enum:Object.values(UserRoles),
-            default:UserRoles.CLIENT
+            enum:  ['client', 'admin'],
+            required: true,
         },
         latitudeDeUser: Number,
         longitudeDeUser: Number,

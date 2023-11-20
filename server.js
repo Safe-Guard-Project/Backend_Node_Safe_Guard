@@ -12,7 +12,6 @@ const port = process.env.PORT || 9090; // Port for the server
 const databaseName = 'safeguardDB';
 
 
-
 mongoose.set('debug', true);
 mongoose.Promise = global.Promise;
 
