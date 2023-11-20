@@ -3,6 +3,7 @@ import User from '../models/user.js'
 import mongoose from 'mongoose';
 
 // Create a catastrophe
+
 function addCatastrophe(req, res) {
     const { titre, type, tsunami, description, date, radius, magnitude, latitudeDeCatastrophe, longitudeDeCatastrophe } = req.body;
     Catastrophe.create({
