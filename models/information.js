@@ -2,16 +2,19 @@ import mongoose from 'mongoose';
 const { Schema, model, Types } = mongoose;
 
 const informationSchema = new Schema(
-    {
+    {   titre: {
+        type: String,
+        required: true
+    },
         typeCatastrophe: {
             type: String,
             required: true
         },
-       /* idUser: {
+      User: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
-        },*/
+        },
         pays: {
             type: String,
             required: true
@@ -25,7 +28,7 @@ const informationSchema = new Schema(
             required: true
         },
         dateDePrevention: {
-            type: String,
+            type: Date,
             required: true
         },
         image: {

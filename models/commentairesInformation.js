@@ -3,16 +3,16 @@ const { Schema, model, Types } = mongoose;
 
 const commentairesInformationSchema = new Schema(
     {
-        /*idUser: {
+        idUser: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
         },
         idInformation: {
-            type: Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Information',
             required: true
-        },*/
+        },
         descriptionCommentaire: {
             type: String,
             required: true

@@ -1,30 +1,30 @@
-import commentairesInformation  from "../models/commentairesInformation.js"
-export function addCommentInfo(req, res) {
+import commentairesInformation   from "../models/commentairesInformation.js"
 
-  information.create({
-  //idUser:req.body.idUser,
-  //idInformation: req.body.idInformation,
-descriptionCommentaire: req.body.descriptionCommentaire
-    .then((newcommentInformation) => {
-      res.status(200).json(newcomenntInformation);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    })
-  })
-}
-/*export function addCommentInfo(req, res) {
-  commentairesInformation.create({
-    idUser:req.body.idUser ,
-    idInformation: req.body.idInformation ,
-    descriptionCommentaire: req.body.descriptionCommentaire})
-    .then((newcommentairesInformation) => {
-      res.status(200).json(newcommentairesInformation);
+
+
+
+export function addCommentInfo(req, res) {
+  const { idInformation, descriptionCommentaire } = req.body;
+
+  if (!idInformation || !descriptionCommentaire) {
+    return res.status(400).json({ error: "Champs vides !" });
+  }
+
+  const nouveauCommentaireInformation = new commentairesInformation({
+    idInformation: idInformation,
+    descriptionCommentaire: descriptionCommentaire
+  });
+
+  nouveauCommentaireInformation
+    .save()
+    .then((nouveaucommentairesInformation) => {
+      res.status(200).json(nouveaucommentairesInformation);
     })
     .catch((err) => {
       res.status(500).json({ error: err });
     });
-}*/
+}
+
 
 export function getAllCommentInfo(req, res) {
   commentairesInformation.find({})
