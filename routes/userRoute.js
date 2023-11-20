@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import {  createAccount, authentificateUser, displayUserProfile,modifyUserProfile, recoverPassword,validateOTP, changePassword, displayAllUsers, deleteUser, addNearbyFriend, displayNearbyFriends, deleteAccount, recoverPasswordByPhoneNumber, validateOTPSms,verifyOTPFromTwilio } from '../controllers/userController.js';
+import {   displayUserProfile,modifyUserProfile, recoverPassword,validateOTP, changePassword, displayAllUsers, deleteUser, addNearbyFriend, displayNearbyFriends, deleteAccount, recoverPasswordByPhoneNumber,verifyOTPFromTwilio, createAccountAdmin, createAccountClient, authenticateClient, authenticateAdmin } from '../controllers/userController.js';
 
 const router = express.Router();
 router
@@ -10,11 +10,18 @@ router
 .route('/displayNearbyFriends')
 .get(displayNearbyFriends)
 router
-.route('/register')
-.post(createAccount) 
+.route('/registerClient')
+.post(createAccountClient) 
 router
-.route('/login')
-.post(authentificateUser)
+.route('/registerAdmin')
+.post(createAccountAdmin)
+
+router
+.route('/loginClient')
+.post(authenticateClient)
+router
+.route('/loginAdmin')
+.post(authenticateAdmin)
 router
 .route('/:_id')
 .delete(deleteUser)
@@ -25,6 +32,7 @@ router
 .post(recoverPassword)
 router
 .route('/validateOtp')
+.post(validateOTP)
 router
 .route('/recoverPassBySms')
 .post(recoverPasswordByPhoneNumber)

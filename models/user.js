@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import UserRoles from './userRoles.js';
     const { Schema, model  } = mongoose;
 
     const userSchema = new Schema(
@@ -18,12 +17,14 @@ import UserRoles from './userRoles.js';
             type: String,
             required: true
         },
+<<<<<<< Updated upstream
+=======
         Role: {
-
             type:String,
-            enum:Object.values(UserRoles),
-            default:UserRoles.CLIENT
+            enum:  ['client', 'admin'],
+            required: true,
         },
+>>>>>>> Stashed changes
         latitudeDeUser: Number,
         longitudeDeUser: Number,
         numeroTel: Number,

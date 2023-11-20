@@ -7,12 +7,12 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
 import Amis from '../models/amis.js';
-import UserRoles from '../models/userRoles.js';
-
 import twilio from 'twilio';
 const accountSid = 'ACc0e71b50773720619a9a305d83d9778d'; // Your Twilio Account SID
 const authToken = 'a03baf8d38980649674937e0c130bce6'; // Your Twilio Auth Token
 const verifySid = 'VAece4a5891c0da464781c834ea63a1d18';
+
+
 
 const twilioPhoneNumber = '+16106746392'; // Your Twilio phone Number
 const phoneNumber=process.env.PHONE_NUMBER;
@@ -25,11 +25,13 @@ dotenv.config();
 
 //import  Geocodio from 'geocodio-library-node';
 //const geocoder = new Geocodio('ff4368cc5fc2084156641546cc5548415c40066');
-//geocoder.reverse('38.©,-76.9990361')
+//geocoder.reverse('38.Â©,-76.9990361')
   //.then(response => {
     //console.log(response);
   //})
- 
+  
+  // Initialize Passport and restore authentication state from session
+
   
 // Function for user profile modification
 
@@ -63,63 +65,62 @@ export async function modifyUserProfile(req, res) {
 
 
 
-// Rest of your functions...
-
-// Function for creating a user account
-export async function createAccount(req,res){
-  // Trouver les erreurs  de validation dans cette requete et les envelopper dans un objet
-  if (!validationResult(req).isEmpty())
-  {
-      res.status(400).json({errors: validationResult(req).array()});
-  }
-  else{
-
-  User
-  .create({
-    UserName: req.body.UserName,
+export async function createAccountAdmin(req, res) {
+  // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
+  if (!validationResult(req).isEmpty()) {
+    res.status(400).json({ errors: validationResult(req).array() });
+  } else {
+    User.create({
+      UserName: req.body.UserName,
       email: req.body.email,
       password: await hash(req.body.password, 10),
-      latitudeDeUser: null,
-      longitudeDeUser: null,
-      numeroTel: req.body.numeroTel,
-      
-  })
-  .then(newUser=> {
-      res.status(200).json(newUser);
-
-  })
-  .catch(err => {
-      res.status(500).json({error:err});
-  });
+      Role: 'admin', // Use the ADMIN_ROLE from environment variables
+    })
+      .then((newAdmin) => {
+        res.status(200).json(newAdmin);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err });
+      });
   }
 }
 
-export async function authentificateUser(req, res) {
+// Function for creating a user account
+export async function createAccountClient(req,res){
+   // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
+   if (!validationResult(req).isEmpty()) {
+    res.status(400).json({ errors: validationResult(req).array() });
+  } else {
+    User.create({
+      UserName: req.body.UserName,
+      email: req.body.email,
+      password: await hash(req.body.password, 10),
+      Role: 'client', // Use 'client' directly
+      latitudeDeUser: null,
+      longitudeDeUser: null,
+      numeroTel: req.body.numeroTel,
+    })
+      .then((newUser) => {
+        res.status(200).json(newUser);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err });
+      });
+  }
+}
+
+
+ 
+
+
+
+
+export async function authenticateClient(req, res) {
   try {
     const data = req.body;
 
-    // Check if the provided email and password match the admin credentials from .env
-    if (
-      data.email === 'mr.djebbi@gmail.com' &&
-      data.password === process.env.ADMIN_PASSWORD
-    ) {
-      // Admin authentication
-      const payload = {
-        _id: '1', // Replace 'admin_id' with the desired admin user ID
-        username: 'admin', // Set the username for admin
-        email: 'mr.djebbi@gmail.com', // Use the fixed email for admin
-        password: process.env.ADMIN_PASSWORD, // Use the admin password from .env
-        Role: UserRoles.ADMIN, // Add Role information for admin
-      };
-
-      const apiKey = process.env.SECRET_KEY;
-      const token = jwt.sign(payload, apiKey);
-
-      return res.status(200).send({ token, apiKey });
-    }
-
-    // If not admin, perform user authentication
-    const user = await User.findOne({ email: data.email });
+    // Check if the provided email and password match any user account
+    const user = await User.findOne({ email: data.email,Role:'client'});
 
     if (!user) {
       return res.status(404).send('Email and password are invalid!');
@@ -131,12 +132,49 @@ export async function authentificateUser(req, res) {
       return res.status(401).send('Email or password is invalid');
     }
 
+    // User authentication
     const payload = {
       _id: user._id,
       username: user.UserName,
       email: user.email,
-      password: user.password,
-      Role: user.UserRoles.CLIENT, // Add Role information for the user
+      role: user.Role, // Use the role from the user model
+      // You can include additional user-specific attributes in the payload if needed
+    };
+
+    const apiKey = process.env.SECRET_KEY;
+    const token = jwt.sign(payload, apiKey);
+
+    return res.status(200).send({ token, apiKey });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Internal server error');
+  }
+}
+
+export async function authenticateAdmin(req, res) {
+  try {
+    const data = req.body;
+
+    // Check if the provided email and password match any user account
+    const admin = await User.findOne({ email: data.email, Role: 'admin' });
+
+    if (!admin) {
+      return res.status(404).send('Email and password are invalid for admin!');
+    }
+
+    const validPass = bcrypt.compareSync(data.password, admin.password);
+
+    if (!validPass) {
+      return res.status(401).send('Email or password is invalid for admin');
+    }
+
+    // Admin authentication
+    const payload = {
+      _id: admin._id,
+      username: admin.UserName,
+      email: admin.email,
+      role: admin.Role, // Use the role from the admin user model
+      // You can include additional admin-specific attributes in the payload if needed
     };
 
     const apiKey = process.env.SECRET_KEY;
@@ -197,6 +235,7 @@ export function recoverPassword(req, res) {
 
   // Example: You might send a password reset code to the user's email.
   const { email } = req.body;
+  const companyName = process.env.COMPANY_NAME;
 
   // Check if the email is valid (you can add more validation here)
   if (!email) {
@@ -211,11 +250,12 @@ export function recoverPassword(req, res) {
   process.env.RESET_EMAIL = email;
 
   // Send an email with the password reset code
-  sendPasswordResetCodeEmail(email, resetCode);
+  sendPasswordResetCodeEmail(email, resetCode, companyName);
 
   // Respond with a success message
   res.status(200).json({ message: 'Password reset code sent to your email' });
 }
+
 
 // Function to generate a unique 4-digit OTP code
 function generateOTP() {
@@ -237,13 +277,13 @@ export async function sendOTPWithTwilio(phoneNumber, otpCode) {
   }
 }
 // Function to send a password reset code email
-function sendPasswordResetCodeEmail(email, resetCode) {
+function sendPasswordResetCodeEmail(email, resetCode, companyName) {
   // Create a Nodemailer transporter with your email service configuration.
   const transporter = nodemailer.createTransport({
     service: 'Gmail', // e.g., 'Gmail', 'Yahoo', etc.
     auth: {
       user: 'katadjebbi@gmail.com', // your email address
-      pass: 'tmaagphndmedkolz', // your email password or an application-specific password
+      pass: 'fwotfbwkeqgmbyee', // your email password or an application-specific password
     },
   });
 
@@ -251,9 +291,73 @@ function sendPasswordResetCodeEmail(email, resetCode) {
   const mailOptions = {
     from: 'katadjebbi@gmail.com',
     to: email,
-    subject: 'Password Reset Code',
-    text: `Your password reset code is: ${resetCode}`,
-  };
+    subject: `Password Reset Code for ${companyName}`,
+    html: `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+          }
+
+          .header {
+            background-color: #f2f2f2;
+            padding: 20px;
+            text-align: center;
+          }
+
+          .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+          }
+
+          .body {
+            padding: 20px;
+          }
+
+          .body p {
+            font-size: 16px;
+            line-height: 1.5;
+          }
+
+          .footer {
+            background-color: #f2f2f2;
+            padding: 20px;
+            text-align: center;
+          }
+
+          .footer p {
+            font-size: 12px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Password Reset for ${companyName}</h1>
+        </div>
+
+        <div class="body">
+          <p>Dear ${email},</p>
+
+          <p>You have requested a password reset for your account on ${companyName}.</p>
+
+          <p>Your password reset code is: ${resetCode}</p>
+
+          <p>Please use this code to reset your password.</p>
+
+          <p>Sincerely,</p>
+          <p>The ${companyName} Team</p>
+        </div>
+
+        <div class="footer">
+          <p>&copy; 2023 ${companyName}</p>
+        </div>
+      </body>
+    </html>
+  `,
+};
 
   // Send the email
   transporter.sendMail(mailOptions, (error, info) => {
@@ -285,7 +389,7 @@ export function validateOTP(req, res) {
   res.status(200).json({ message: 'OTP is valid.' });
 }
 
-export function validateOTPSms(req, res) {
+/*export function validateOTPSms(req, res) {
   const { otp } = req.body;
 
   // Retrieve the stored reset code from the environment variable
@@ -301,7 +405,7 @@ export function validateOTPSms(req, res) {
 
 
   res.status(200).json({ message: 'OTP is valid.' });
-}
+}*/
 
 
 // Function to change the password
