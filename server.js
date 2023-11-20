@@ -6,7 +6,6 @@ import programme from './routes/programme.js';
 import commentairesProgramme from "./routes/commentairesProgramme.js";
 import favorie from './routes/favorie.js';
 import coursProgramme from './routes/coursProgramme.js';
-import quiz from './routes/quiz.js';
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
 import trajetSecuriseRoutes from './routes/tarjetSecuriseRoute.js';
 import zoneDeDangerRoutes from './routes/zoneDeDangerRoute.js';
