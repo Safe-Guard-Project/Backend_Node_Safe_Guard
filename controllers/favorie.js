@@ -1,8 +1,8 @@
 import  Favorie  from "../models/favorie.js";
 export function addFav(req, res) {
   Favorie.create({
-    idUser: req.body.idUser,
-    idRessourceProgramme: req.body.idRessourceProgramme,
+    
+    idCoursProgramme: req.body.idCoursProgramme,
   })
     .then((newVd) => {
       res.status(200).json(newVd);

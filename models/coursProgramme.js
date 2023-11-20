@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 const { Schema, model, Types } = mongoose;
 
-const ressourceProgrammeSchema = new Schema(
+const coursProgrammeSchema= new Schema(
     {
-        video: {
+        Type: {
             type: String,
+            enum: [ 'Introduction' ,'CAUSE', 'CONSEQUENCE', 'SIGNE','Agir'],
             required: true
         },
         image: {
@@ -25,4 +26,4 @@ const ressourceProgrammeSchema = new Schema(
     }
 );
 
-export default model("RessourceProgramme", ressourceProgrammeSchema);
+export default model("CoursProgramme", coursProgrammeSchema);

@@ -1,16 +1,18 @@
 import mongoose from 'mongoose';
-const { Schema, model, Types } = mongoose;
+const { Schema, model , Types} = mongoose;
 
 const favorieSchema = new Schema(
     {
-        idRessourceProgramme: {
+    
+        idCoursProgramme: {
             type: Types.ObjectId,
-            ref: 'RessourceProgramme'
+            ref: 'CoursProgramme'
         },
         idUser: {
             type: Types.ObjectId,
             ref: 'User'
-        }
+        },
+       
     }, 
     {
         timestamps : true

@@ -3,18 +3,29 @@ const { Schema, model, Types } = mongoose;
 
 const commentairesProgrammeSchema = new Schema(
     {
-        textCommentaire: {
+        textComment: {
             type: String,
             required: true
         },
-        idProgramme: {
+        idCoursProgramme: {
             type: Types.ObjectId,
-            ref: 'Programme'
-        }
+            ref: 'CoursProgramme'
+        },
+        idUser: {
+            type: Types.ObjectId,
+            ref: 'User'
+        },
+       
     }, 
     {
-        timestamps : true
+        timestamps: true
     }
 );
 
 export default model("CommentairesProgramme", commentairesProgrammeSchema);
+
+
+
+
+
+    
