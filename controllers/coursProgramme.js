@@ -6,7 +6,7 @@ export function addRessource(req, res) {
     Type : req.body.Type ,
     description: req.body.description,
     idProgramme: req.body.idProgramme,
-    image: `${req.protocol}://${req.get("host")}/img/${req.file.filename}`,
+    image: `${req.file.filename}`,
   })
     .then((newProg) => {
       res.status(200).json(newProg);

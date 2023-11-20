@@ -11,6 +11,10 @@ const commentairesProgrammeSchema = new Schema(
             type: Types.ObjectId,
             ref: 'CoursProgramme'
         },
+        idUser: {
+            type: Types.ObjectId,
+            ref: 'User'
+        },
        
     }, 
     {
