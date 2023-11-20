@@ -17,14 +17,11 @@ import mongoose from 'mongoose';
             type: String,
             required: true
         },
-<<<<<<< Updated upstream
-=======
         Role: {
             type:String,
             enum:  ['client', 'admin'],
             required: true,
         },
->>>>>>> Stashed changes
         latitudeDeUser: Number,
         longitudeDeUser: Number,
         numeroTel: Number,
