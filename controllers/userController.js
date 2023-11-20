@@ -493,22 +493,20 @@ export async function displayNearbyFriends(req, res) {
   }
 
 // Function for account deletion (implementation depends on your requirements)
-export function deleteAccount(req, res) {
-  // Assuming you have the user's _id in the payload
-  const userId = req.user._id; // Assuming you have set the user object in the request
+export async function deleteAccount(req, res) {
+  const userId = req.params.userId; // Retrieve user ID from request parameters
 
-  // Find and delete the user based on the _id
-  User.findByIdAndDelete(userId, (err, deletedUser) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error deleting the user' });
-    }
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
 
     if (!deletedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     return res.status(200).json({ message: 'User deleted successfully' });
-  });
+  } catch (err) {
+    return res.status(500).json({ error: 'Error deleting Account' });
+  }
 }
 
 // Define the callback function for user deletion
