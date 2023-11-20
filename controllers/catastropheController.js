@@ -1,7 +1,9 @@
 import Catastrophe from '../models/catastrophe.js';
+import User from '../models/user.js'
 import mongoose from 'mongoose';
 
 // Create a catastrophe
+
 function addCatastrophe(req, res) {
     const { titre, type, tsunami, description, date, radius, magnitude, latitudeDeCatastrophe, longitudeDeCatastrophe } = req.body;
     Catastrophe.create({
@@ -86,11 +88,37 @@ function deleteCatastropheById(req, res) {
     });
 }
 
+const getUsersInCatastropheRadius = async (catastrophe) => {
+    try {
+      const { latitudeDeCatastrophe, longitudeDeCatastrophe, radius } = catastrophe;
+  
+      // Find users within a rectangular region
+      const usersInRadius = await User.find({
+        latitudeDeUser: {
+          $gte: latitudeDeCatastrophe - radius,
+          $lte: latitudeDeCatastrophe + radius,
+        },
+        longitudeDeUser: {
+          $gte: longitudeDeCatastrophe - radius,
+          $lte: longitudeDeCatastrophe + radius,
+        },
+      });
+      console.log('Users in catastrophe radius:', usersInRadius);
+  
+      return usersInRadius;
+    } catch (error) {
+      console.error('Error fetching users in catastrophe radius:', error);
+      throw new Error('Failed to fetch users in catastrophe radius');
+    }
+  };
+  
+
 export {
     addCatastrophe,
     getAllCatastrophes,
     getCatastropheById,
     updateCatastropheById,
     deleteCatastropheById,
-    deleteAllCatastrophes
+    deleteAllCatastrophes,
+    getUsersInCatastropheRadius
 };

@@ -16,13 +16,27 @@ import informationRoute from './routes/informationRoute.js';
 import alertRoutes from './routes/alertRoutes.js';
 import catastropheRoutes from './routes/catastropheRoutes.js';
 import usgsRoutes from './routes/usgs_api.js';
-import userRoutes from './routes/userRoute.js';
-
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 const app = express() 
 const hostname = '127.0.0.1'; 
 const port=process.env.PORT || 9090
 const databaseName = 'safeguardDB';
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Your API Documentation',
+      version: '1.0.0',
+    },
+  },
+  // Path to the API docs
+  apis: ['./routes/*.js'],
+};
+
+const specs = swaggerJsdoc(swaggerOptions);
 mongoose.set('debug',true);
 mongoose.Promise = global.Promise;
 mongoose
@@ -57,7 +71,7 @@ app.use('/alert', alertRoutes);
 app.use('/catastrophe', catastropheRoutes);
 app.use('/api', usgsRoutes);
 
-app.use('/user', userRoutes);
+app.use('/safeG', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(notFoundError);
 app.use (errorHandler);
