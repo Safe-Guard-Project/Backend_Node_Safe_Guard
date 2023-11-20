@@ -8,14 +8,14 @@ import user from '../models/user.js';
 
 export function createTarjetSecurise(req, res) {
     const { etat, iduser, idCatastrophe } = req.body;
-    const newTarjetSecurise = new TarjetSecurise({ etat, iduser, idCatastrophe });
-    newTarjetSecurise.save()
-        .then(savedTarjetSecurise => res.json(savedTarjetSecurise))
+    const newTrajetSecurise = new TrajetSecurise({ etat, iduser, idCatastrophe });
+    newTrajetSecurise.save()
+        .then(savedTrajetSecurise => res.json(savedTrajetSecurise))
         .catch(err => res.status(400).json(err));
 }
 
 
-export function getTarjetSecurises(req, res) {
+export function getTrajetSecurises(req, res) {
     TrajetSecurise.find()
         .then(
             TrajetSecurise => res.status(200).json(TrajetSecurise)
@@ -39,8 +39,8 @@ export function updateTrajetSecurise(req, res) {
 // when we use querys in the post mqn we need to get it from req.query.variableName
 // when we need it from pamas we need to send the request withiout ?id= and get it from req.params.variableName
 export function getusersByTrajet(req, res) {
-    console.log("hello", req.query);
-    const { latitudeDeCatastrophe, longitudeDeCatastrophe, radius } = req.query;
+    console.log("hello", req.params);
+    const { latitudeDeCatastrophe, longitudeDeCatastrophe, radius } = req.params;
     User.find({
         latitudeDeUser: { $gte: latitudeDeCatastrophe - radius, $lte: latitudeDeCatastrophe + radius },
         longitudeDeUser: { $gte: longitudeDeCatastrophe - radius, $lte: longitudeDeCatastrophe + radius }
