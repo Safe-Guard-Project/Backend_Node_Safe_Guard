@@ -153,7 +153,7 @@ router
  *       '500':
  *         description: Internal server error
  */
-
+//swagger
 
 router.route("/:_id").put(multer, UpdateInformation);
 
