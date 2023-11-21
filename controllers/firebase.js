@@ -20,7 +20,7 @@ async function sendPushNotification(notification) {
 
 
 async function sendNotificationToUser(user, catastrophe) {
-    const { deviceToken } = user;
+    const { deviceToken} = user;
 
     const notificationMessage = {
         name: 'You are in the radius of a catastrophe!',
@@ -36,7 +36,7 @@ async function sendNotificationToUser(user, catastrophe) {
     try {
       
         await sendPushNotification(notificationMessage);
-        //console.log(`Notification sent to user ${user._id} about catastrophe ${catastrophe._id}`);
+       
     } catch (error) {
         console.error(`Error sending notification to user ${user._id}:`, error);
     }

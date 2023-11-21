@@ -3,7 +3,7 @@ import Catastrophe from '../models/catastrophe.js';
 import { getUsersInCatastropheRadius } from '../controllers/catastropheController.js'
 import { sendNotificationToUser } from "./firebase.js";
 import mongoose from "mongoose";
-
+import {chnageEtatTotrueWithIdUser} from '../controllers/tarjetSecuriseControllers.js'
 const fetchEarthquakeData = async () => {
     try {
       const response = await axios.get('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
@@ -60,6 +60,7 @@ const fetchEarthquakeData = async () => {
         // Send notifications to users
         for (const user of usersInRadius) {
           sendNotificationToUser(user, newCatastrophe);
+          chnageEtatTotrueWithIdUser(user.id)
         }
       }
       console.log('Processing and notifying users completed successfully');

@@ -81,7 +81,15 @@ export function chnageEtatTotrue(req, res) {
             res.status(400).json({ error: err.message });
         });
 }
-
+export function chnageEtatTotrueWithIdUser(iduser) {
+    TrajetSecurise.findOneAndUpdate({ iduser: iduser }, { etat: true })
+        .then((updatedTrajet) => {
+            console.log(updatedTrajet);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
 
 
 export function chnageEtatTofalse(req, res) {
