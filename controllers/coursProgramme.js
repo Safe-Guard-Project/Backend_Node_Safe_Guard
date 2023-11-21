@@ -1,11 +1,11 @@
 
 import CoursProgramme from '../models/coursProgramme.js';
+import Programme from '../models/programme.js';
 export function addRessource(req, res) {
  
   CoursProgramme.create({
     Type : req.body.Type ,
     description: req.body.description,
-    idProgramme: req.body.idProgramme,
     image: `${req.file.filename}`,
   })
     .then((newProg) => {
@@ -15,6 +15,31 @@ export function addRessource(req, res) {
       res.status(500).json({ error: err });
     });
 }
+// export async function addRessource(req, res) {
+  
+
+//     const idProgramme = req.params.idProgramme;
+//     const programmeExists = await Programme.exists({ _id: idProgramme });
+
+//     if (!programmeExists) {
+//       return res.status(404).json({ error: 'Le programme n\'existe pas.' });
+//     }
+
+//     CoursProgramme.create({
+//           Type : req.body.Type ,
+//           description: req.body.description,
+//           idProgramme: idProgramme,
+//           image: `${req.file.filename}`,
+//         })
+//           .then((newProg) => {
+//             res.status(200).json(newProg);
+//           })
+//           .catch((err) => {
+//             res.status(500).json({ error: err });
+//           });
+// }
+      
+
 
 export function getCoursByProgrammeId(req, res) {
   const programmeId = req.params.programmeId;

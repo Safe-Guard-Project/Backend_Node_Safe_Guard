@@ -15,6 +15,10 @@ const programmeSchema = new Schema(
             type: String,
             required: true
         },
+        cours: [{
+            type: Schema.Types.ObjectId,
+            ref: 'CoursProgramme', 
+          }],
        
     }, 
     {

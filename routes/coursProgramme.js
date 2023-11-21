@@ -2,10 +2,11 @@ import express from "express";
 import {
   addRessource,
   getAll,
-  getCoursByProgrammeId,
+
   deleteOnceRess,deleteAll,Update,  getOnceByType 
 } from "../controllers/coursProgramme.js";
 import multer from "../middlewares/multer-config.js";
+
 
 const router = express.Router();
 /**
@@ -83,12 +84,13 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
-router.route("/").post(multer, addRessource).get(getAll).delete(deleteAll);
+
+router.route("/").post(multer,addRessource).get(getAll).delete(deleteAll);
 router
   .route("/:Type")
   .get(getOnceByType)
 
 router.route("/:_id").delete(deleteOnceRess).put(multer,Update);
-router.route("/:programmeId/cours").get(getCoursByProgrammeId);
+//router.route("/:idProgramme/cours").get(getCoursByProgrammeId);
 
 export default router;

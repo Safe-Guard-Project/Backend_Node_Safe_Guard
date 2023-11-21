@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { Schema, model, Types } = mongoose;
+const { Schema, model } = mongoose;
 
 const coursProgrammeSchema= new Schema(
     {
@@ -16,10 +16,7 @@ const coursProgrammeSchema= new Schema(
             type: String,
             required: true
         },
-        idProgramme: {
-            type: Types.ObjectId,
-            ref: 'Programme'
-        }
+        
     }, 
     {
         timestamps : true

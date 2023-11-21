@@ -4,7 +4,8 @@ export function AjouterProgramme(req, res) {
   Programme.create({
     Titre: req.body.Titre,
     descriptionProgramme: req.body.descriptionProgramme,
-    image: `${req.file.filename}`,
+    image: `${req.file.filename}` ,
+    cours: req.body.cours,
   })
     .then((newProg) => {
       res.status(200).json(newProg);
@@ -23,6 +24,19 @@ export function getAllProg(req, res) {
       res.status(500).json({ error: err });
     });
 }
+
+export function getProgrammesWithCours(req, res) {
+  Programme.find({})
+    .populate('cours')
+    .exec()
+    .then((programmes) => {
+      res.status(200).json(programmes);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
 
 export function getOnceProg(req, res) {
   Programme.findOne({ Titre: req.params.Titre })
