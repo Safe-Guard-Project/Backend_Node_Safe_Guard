@@ -8,7 +8,7 @@ const amisSchema = new Schema(
             required: true,
             unique: true
         },
-        iduser: {
+        iduser: { 
             type: Types.ObjectId,
             ref: 'User'
         }

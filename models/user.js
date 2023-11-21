@@ -24,7 +24,7 @@ import mongoose from 'mongoose';
         },
         latitudeDeUser: Number,
         longitudeDeUser: Number,
-        numeroTel: Number,
+        numeroTel: String,
     }, 
     {
     timestamps : true
