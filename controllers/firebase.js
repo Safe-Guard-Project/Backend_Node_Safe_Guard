@@ -26,6 +26,7 @@ async function sendNotificationToUser(user, catastrophe) {
         name: 'You are in the radius of a catastrophe!',
         data: {
             catastropheId: 'test',
+            description: catastrophe.description,
         },
         topic: 'general',
         
