@@ -330,6 +330,7 @@ router
 router.route('/validateOtp').post(validateOTP);
 
 
+
 /**
  * @swagger
  * /user/recoverPassBySms:

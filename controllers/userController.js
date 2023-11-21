@@ -8,13 +8,11 @@ import nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
 import Amis from '../models/amis.js';
 import twilio from 'twilio';
-const accountSid = 'ACc0e71b50773720619a9a305d83d9778d'; // Your Twilio Account SID
-const authToken = 'a03baf8d38980649674937e0c130bce6'; // Your Twilio Auth Token
+const accountSid = 'ACe1ba384790b795e6f000e81de0a64378'; // Your Twilio Account SID
+const authToken = '173998083808e43b4377fc04d567a8c0'; // Your Twilio Auth Token
 const verifySid = 'VAece4a5891c0da464781c834ea63a1d18';
 
-
-
-const twilioPhoneNumber = '+16106746392'; // Your Twilio phone Number
+const twilioPhoneNumber = '+14698046132'; // Your Twilio phone Number
 const phoneNumber=process.env.PHONE_NUMBER;
 const client = twilio(accountSid, authToken);
 const receiver =process.env.TWILIO_PHONE_NUMBER
@@ -187,31 +185,31 @@ export async function authenticateAdmin(req, res) {
   }
 }
 
-export async function recoverPasswordByPhoneNumber(req, res) {
-  try {
-    const { phoneNumber } = req.body; // Get the phone number from the request
+  export async function recoverPasswordByPhoneNumber(req, res) {
+    try {
+      const { phoneNumber } = req.body; // Get the phone number from the request
 
-    if (!phoneNumber) {
-      return res.status(400).json({ error: 'Invalid phone number' });
+      if (!phoneNumber) {
+        return res.status(400).json({ error: 'Invalid phone number' });
+      }
+
+      // Generate a unique 4-digit OTP code
+      const otpCode = generateOTP();
+
+      // Send the OTP code to the user's phone number using Twilio
+      const smsSent = await sendOTPWithTwilio(phoneNumber, otpCode);
+      
+      
+      if (smsSent) {
+        process.env.PHONE_OTP = otpCode;
+        res.status(200).json({ message: 'OTP code sent to your phone number' });
+      } else {
+        res.status(500).json({ error: 'Error sending OTP code' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-
-    // Generate a unique 4-digit OTP code
-    const otpCode = generateOTP();
-
-    // Send the OTP code to the user's phone number using Twilio
-    const smsSent = await sendOTPWithTwilio(phoneNumber, otpCode);
-    
-    
-    if (smsSent) {
-      process.env.PHONE_OTP = otpCode;
-      res.status(200).json({ message: 'OTP code sent to your phone number' });
-    } else {
-      res.status(500).json({ error: 'Error sending OTP code' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
-}
 
 export async function verifyOTPFromTwilio(req, res) {
   const phoneOTP = process.env.PHONE_OTP;
@@ -263,19 +261,30 @@ function generateOTP() {
   const otp = Math.floor(1000 + Math.random() * 9000);
   return otp.toString();
 }
-export async function sendOTPWithTwilio(phoneNumber, otpCode) {
+
+
+async function sendOTPWithTwilio(phoneNumber, otpCode) {
   try {
+    // Log the details before sending the message
+    console.log('Sending OTP to:', phoneNumber, 'from:', twilioPhoneNumber);
+
+    // Send the OTP using Twilio
     await client.messages.create({
       body: `Your OTP code is: ${otpCode}`,
       from: twilioPhoneNumber,
       to: phoneNumber,
     });
+
+    console.log('OTP sent successfully');
     return true; // Message sent successfully
   } catch (error) {
-    console.error('Error sending OTP:', error);
+    console.error('Error sending OTP:', error.message);
     return false; // Message sending failed
   }
 }
+
+
+
 // Function to send a password reset code email
 function sendPasswordResetCodeEmail(email, resetCode, companyName) {
   // Create a Nodemailer transporter with your email service configuration.
