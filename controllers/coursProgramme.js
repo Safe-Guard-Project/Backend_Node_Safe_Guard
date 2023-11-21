@@ -16,6 +16,17 @@ export function addRessource(req, res) {
     });
 }
 
+export function getCoursByProgrammeId(req, res) {
+  const programmeId = req.params.programmeId;
+  CoursProgramme.find({ idProgramme: programmeId })
+  .then((docs) => {
+    res.status(200).json(docs);
+  })
+  .catch((err) => {
+    res.status(500).json({ error: err });
+  });
+}
+
 export function getAll(req, res) {
     CoursProgramme.find({})
     .then((docs) => {

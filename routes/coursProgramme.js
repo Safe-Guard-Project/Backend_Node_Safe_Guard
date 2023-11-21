@@ -2,8 +2,8 @@ import express from "express";
 import {
   addRessource,
   getAll,
-
-  deleteOnceRess,deleteAll,Update,  getOnceByType
+  getCoursByProgrammeId,
+  deleteOnceRess,deleteAll,Update,  getOnceByType 
 } from "../controllers/coursProgramme.js";
 import multer from "../middlewares/multer-config.js";
 
@@ -87,7 +87,8 @@ router.route("/").post(multer, addRessource).get(getAll).delete(deleteAll);
 router
   .route("/:Type")
   .get(getOnceByType)
-router.route("/:_id").delete(deleteOnceRess).put(multer,Update);
 
+router.route("/:_id").delete(deleteOnceRess).put(multer,Update);
+router.route("/:programmeId/cours").get(getCoursByProgrammeId);
 
 export default router;
