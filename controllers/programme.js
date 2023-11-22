@@ -14,6 +14,18 @@ export function AjouterProgramme(req, res) {
     });
 }
 
+export function getProgrammesWithCours(req, res) {
+  Programme.find({})
+    .populate('cours')
+    .exec()
+    .then((programmes) => {
+      res.status(200).json(programmes);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
 export function getAllProg(req, res) {
   Programme.find({})
     .then((docs) => {

@@ -20,6 +20,8 @@ import swaggerUi from 'swagger-ui-express';
 import quiz from './routes/quiz.js';
 import questions from './routes/questions.js';
 import choix from './routes/choix.js';
+import userRoutes from './routes/userRoute.js';
+import 'dotenv/config';
 
 const app = express() 
 const hostname = '127.0.0.1'; 
@@ -43,7 +45,7 @@ mongoose.set('debug',true);
 mongoose.Promise = global.Promise;
 mongoose
 mongoose
-  .connect(`mongodb://${hostname}:27017/${databaseName}`)
+  .connect(process.env.DB_URL)
   .then(() => {
     console.log(`Connected to ${databaseName}`);
   })
@@ -75,6 +77,7 @@ app.use('/alert', alertRoutes);
 app.use('/catastrophe', catastropheRoutes);
 app.use('/api', usgsRoutes);
 
+app.use('/user', userRoutes);
 app.use('/safeG', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(notFoundError);

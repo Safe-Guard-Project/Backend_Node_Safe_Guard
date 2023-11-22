@@ -6,6 +6,7 @@ import {
   UpdateProg,
   deleteOnceProg,
   deleteAll,
+  getProgrammesWithCours,
 } from "../controllers/programme.js";
 import multer from "../middlewares/multer-config.js";
 
@@ -169,4 +170,6 @@ router
 
 router.route("/:_id").put(multer,UpdateProg);
 
+
+router.route('/cours').get(getProgrammesWithCours);
 export default router;

@@ -14,7 +14,11 @@ const programmeSchema = new Schema(
         image:{
             type: String,
             required: true
-        }
+        },
+        cours: [{
+            type: Schema.Types.ObjectId,
+            ref: 'CoursProgramme', 
+          }],
     }, 
     {
         timestamps : true

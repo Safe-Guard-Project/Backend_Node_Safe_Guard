@@ -111,14 +111,12 @@ export async function createAccountClient(req,res){
  
 
 
-
-
 export async function authenticateClient(req, res) {
   try {
     const data = req.body;
 
     // Check if the provided email and password match any user account
-    const user = await User.findOne({ email: data.email,Role:'client'});
+    const user = await User.findOne({ email: data.email, Role: 'client' });
 
     if (!user) {
       return res.status(404).send('Email and password are invalid!');
@@ -138,7 +136,8 @@ export async function authenticateClient(req, res) {
       role: user.Role, // Use the role from the user model
       // You can include additional user-specific attributes in the payload if needed
     };
-    process.env.userId=_id
+
+    process.env.userId = user._id; // Corrected this line
     const apiKey = process.env.SECRET_KEY;
     const token = jwt.sign(payload, apiKey);
 
@@ -148,7 +147,6 @@ export async function authenticateClient(req, res) {
     return res.status(500).send('Internal server error');
   }
 }
-
 export async function authenticateAdmin(req, res) {
   try {
     const data = req.body;
