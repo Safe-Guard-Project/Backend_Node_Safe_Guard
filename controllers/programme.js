@@ -5,6 +5,7 @@ export function AjouterProgramme(req, res) {
     Titre: req.body.Titre,
     descriptionProgramme: req.body.descriptionProgramme,
     image: `${req.file.filename}`,
+   cours: req.body.cours,
   })
     .then((newProg) => {
       res.status(200).json(newProg);
