@@ -78,6 +78,7 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
+router.route('/cours').get(getProgrammesWithCours);
 router
   .route("/")
   .post(multer, AjouterProgramme)
@@ -171,5 +172,4 @@ router
 router.route("/:_id").put(multer,UpdateProg);
 
 
-router.route('/cours').get(getProgrammesWithCours);
 export default router;
