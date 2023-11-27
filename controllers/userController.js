@@ -84,28 +84,33 @@ export async function createAccountAdmin(req, res) {
 }
 
 // Function for creating a user account
-export async function createAccountClient(req,res){
-   // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
-   if (!validationResult(req).isEmpty()) {
-    res.status(400).json({ errors: validationResult(req).array() });
-  } else {
-    User.create({
+export async function createAccountClient(req, res) {
+  try {
+    // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
+    if (!validationResult(req).isEmpty()) {
+      console.error('Validation errors:', validationResult(req).array());
+      return res.status(400).json({ errors: validationResult(req).array() });
+    }
+
+    const newUser = await User.create({
       UserName: req.body.UserName,
       email: req.body.email,
-      password: await hash(req.body.password, 10),
+      password: req.body.password,
       Role: 'client', // Use 'client' directly
       latitudeDeUser: null,
       longitudeDeUser: null,
       numeroTel: req.body.numeroTel,
-    })
-      .then((newUser) => {
-        res.status(200).json(newUser);
-      })
-      .catch((err) => {
-        res.status(500).json({ error: err });
-      });
+    });
+
+    console.log('New user created:', newUser);
+
+    return res.status(200).json(newUser);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
 
 
  
@@ -117,16 +122,15 @@ export async function authenticateClient(req, res) {
   try {
     const data = req.body;
 
-    // Check if the provided email and password match any user account
-    const user = await User.findOne({ email: data.email,Role:'client'});
+    // Check if the provided email matches any user account
+    const user = await User.findOne({ email: data.email, Role: 'client' });
 
     if (!user) {
       return res.status(404).send('Email and password are invalid!');
     }
 
-    const validPass = bcrypt.compareSync(data.password, user.password);
-
-    if (!validPass) {
+    // Compare the provided password with the stored password
+    if (data.password !== user.password) {
       return res.status(401).send('Email or password is invalid');
     }
 
@@ -138,17 +142,18 @@ export async function authenticateClient(req, res) {
       role: user.Role, // Use the role from the user model
       // You can include additional user-specific attributes in the payload if needed
     };
-    process.env.userId=_id
+
+    process.env.userId = user._id; // Corrected this line
     const apiKey = process.env.SECRET_KEY;
     const token = jwt.sign(payload, apiKey);
 
-    return res.status(200).send({ token, apiKey });
+    // Include user ID in the response
+    return res.status(200).send({ token, apiKey, _id: user._id, UserName: user.UserName, email: user.email, numeroTel: user.numeroTel });
   } catch (error) {
     console.error(error);
     return res.status(500).send('Internal server error');
   }
 }
-
 export async function authenticateAdmin(req, res) {
   try {
     const data = req.body;
@@ -539,6 +544,24 @@ export function deleteUser(req, res) {
     });
 }
 
+export async function getUserIdByEmail(req, res) {
+  try {
+    const email = req.params.email;
+
+    // Retrieve user by email
+    const user = await User.findOne({ email });
+
+    if (user && user._id) {
+      const userId = user._id;
+      res.status(200).json({ userId });
+    } else {
+      res.status(404).json({ error: 'User not found or does not have a userId' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 
 

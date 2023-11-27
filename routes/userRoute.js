@@ -19,6 +19,7 @@ import {
   createAccountClient,
   authenticateClient,
   authenticateAdmin,
+  getUserIdByEmail,
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -520,4 +521,47 @@ router.route('/deleteAccount/:userId').delete(deleteAccount);
  */
 router.route('/deleteUser/:userId').delete(deleteUser);
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management
+ */
+
+/**
+ * @swagger
+ * /getId/{email}:
+ *   get:
+ *     summary: Retrieve user ID by email
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         description: User email
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example:
+ *               userId: '12345'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: User not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: Internal server error
+ */
+
+router.route('/getId/:email').get(getUserIdByEmail);
 export default router;
