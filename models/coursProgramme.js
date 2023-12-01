@@ -8,6 +8,7 @@ const coursProgrammeSchema= new Schema(
             enum: [ 'Introduction' ,'CAUSE', 'CONSEQUENCE', 'SIGNE','Agir'],
             required: true
         },
+        
         image: {
             type: String,
             required: true

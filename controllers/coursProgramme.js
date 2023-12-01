@@ -61,7 +61,7 @@ export function getAll(req, res) {
       res.status(500).json({ error: err });
     });
 }
-
+/*
 export function getOnceByType (req, res) {
   CoursProgramme.find({ Type: req.params.Type })
     .then((docs) => {
@@ -71,6 +71,103 @@ export function getOnceByType (req, res) {
       res.status(500).json({ error: err });
     })
 }
+*/
+/*
+export async function getCoursByType(req, res) {
+  try {
+    const { programmeId, Type } = req.params;
+    const programme = await Programme.findById(programmeId);
+  
+    if (!programme) {
+      return res.status(404).json({ message: 'Programme non trouvé' });
+    }
+    const coursList = await CoursProgramme.find({
+      idProgramme: programme._id,
+      Type: Type,
+    });
+
+    res.status(200).json(coursList);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cours:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des cours' });
+  }
+}
+*/
+/*
+export async function getCoursByType(req, res) {
+  try {
+    const { programmeId, coursType } = req.params;
+
+    // Récupérer le programme par son ID
+    const programme = await Programme.findById(programmeId);
+
+    if (!programme) {
+      return res.status(404).json({ message: 'Programme non trouvé' });
+    }
+
+    // Utiliser la méthode populate pour récupérer les détails des cours associés au programme par type
+    const coursList = await CoursProgramme.find({
+      idProgramme: programme._id,
+      Type: coursType,
+    });
+
+    res.status(200).json(coursList);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cours:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des cours' });
+  }
+}
+*/
+/*
+export async function getCoursByType(req, res) {
+  try {
+    const { programmeId, coursType } = req.params;
+    const programme = await Programme.findById(programmeId);
+
+    if (!programme) {
+      return res.status(404).json({ message: 'Programme non trouvé' });
+    }
+
+    const coursList = await CoursProgramme.find({
+      _id: { $in: programme.cours },
+      Type: coursType,
+    });
+
+    res.status(200).json(coursList);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cours:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des cours' });
+  }
+}
+*/
+export async function getCoursByType(req, res) {
+  try {
+    const { programmeId, coursType } = req.params;
+
+    // Vérifier si le programme existe
+    const programme = await Programme.findById(programmeId);
+
+    if (!programme) {
+      return res.status(404).json({ message: 'Programme non trouvé' });
+    }
+
+    // Rechercher les cours par type et ID de programme
+    const coursList = await CoursProgramme.find({
+      _id: { $in: programme.cours },
+      Type: coursType,
+    });
+
+    if (coursList.length === 0) {
+      return res.status(404).json({ message: `Aucun cours de type ${coursType} trouvé pour le programme spécifié.` });
+    }
+
+    res.status(200).json(coursList);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cours:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des cours' });
+  }
+}
+
 
 export function Update(req, res) {
   const { _id } = req.params;
