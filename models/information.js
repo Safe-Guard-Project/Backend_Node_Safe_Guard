@@ -10,7 +10,7 @@ const informationSchema = new Schema(
             type: String,
             required: true
         },
-      User: {
+      idUser: {
             type: Types.ObjectId,
             ref: 'User',
             required: true
