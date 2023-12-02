@@ -15,7 +15,7 @@ export function AjouterInformation(req, res) {
   pays:req.body.pays,
   region:req.body.region,
   descriptionInformation:req.body.descriptionInformation,
-  image: `${req.protocol}://${req.get("host")}/img/${req.file.filename}`,
+  image: `${req.file.filename}`,
   dateDePrevention,
   pourcentageFiabilite: req.body.pourcentageFiabilite,
   etat,

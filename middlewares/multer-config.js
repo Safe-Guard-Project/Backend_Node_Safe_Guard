@@ -1,33 +1,33 @@
-import multer, { diskStorage } from "multer"; 
+import multer, { diskStorage } from "multer";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
-
 const MIME_TYPES = {
-  "image/jpg": "jpg",
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "video/mp4": "mp4",
+   "image/jpg": "jpg",
+   "image/jpeg": "jpg",
+   "image/png": "png",
+   "video/mp4": "mp4",
 };
 
-export default multer({
-  
-  storage: diskStorage({
-   
-    destination: (req, file, callback) => {
-      const __dirname = dirname(fileURLToPath(import.meta.url)); 
-      callback(null, join(__dirname, "../public")); 
-    },
-   
-    filename: (req, file, callback) => {
-     
-      const name = file.originalname.split(" ").join("_");
+const storage = diskStorage({
+   destination: (req, file, callback) => {
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      callback(null, join(__dirname, "../public"));
+   },
+   filename: (req, file, callback) => {
+      const nameWithoutSpaces = file.originalname.split(" ").join("_");
+      const [name, originalExtension] = nameWithoutSpaces.split('.');
       const extension = MIME_TYPES[file.mimetype];
-   
-      callback(null, name + Date.now() + "." + extension);
-    },
-  }),
- 
-  limits: { fileSize: 50 * 1024 * 1024 },
-}).single("source"); 
-//array("source",10)
+
+      // Use the original extension if it exists, otherwise use the one from the MIME_TYPES
+      const finalExtension = originalExtension || extension;
+
+      const filename = `${name}.${finalExtension}`;
+      callback(null, filename);
+   },
+});
+
+export default multer({
+   storage: storage,
+   limits: { fileSize: 50 * 1024 * 1024 },
+}).single("source");
