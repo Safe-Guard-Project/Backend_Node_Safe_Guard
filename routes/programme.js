@@ -5,8 +5,8 @@ import {
   getOnceProg,
   UpdateProg,
   deleteOnceProg,
-  getProgrammesWithCours,
   deleteAll,
+  getProgrammesWithCours,
 } from "../controllers/programme.js";
 import multer from "../middlewares/multer-config.js";
 
@@ -77,6 +77,7 @@ const router = express.Router();
  *       '500':
  *         description: Internal server error.
  */
+
 router.route('/cours').get(getProgrammesWithCours);
 
 router
@@ -170,5 +171,6 @@ router
  */
 
 router.route("/:_id").put(multer,UpdateProg);
+
 
 export default router;

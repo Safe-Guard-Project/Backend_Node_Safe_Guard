@@ -19,7 +19,6 @@ const programmeSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'CoursProgramme', 
           }],
-       
     }, 
     {
         timestamps : true

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { Schema, model } = mongoose;
+const { Schema, model, Types } = mongoose;
 
 const coursProgrammeSchema= new Schema(
     {
@@ -8,7 +8,6 @@ const coursProgrammeSchema= new Schema(
             enum: [ 'Introduction' ,'CAUSE', 'CONSEQUENCE', 'SIGNE','Agir'],
             required: true
         },
-        
         image: {
             type: String,
             required: true
@@ -17,7 +16,6 @@ const coursProgrammeSchema= new Schema(
             type: String,
             required: true
         },
-        
     }, 
     {
         timestamps : true
