@@ -33,7 +33,7 @@ const informationSchema = new Schema(
         },
         image: {
             type: String,
-            required: true
+            required: false 
         },
         pourcentageFiabilite: {
             type: Number,

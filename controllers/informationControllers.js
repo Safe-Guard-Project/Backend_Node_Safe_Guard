@@ -3,30 +3,37 @@ import information from '../models/information.js';
 //lesfonctions
 
 export function AjouterInformation(req, res) {
- 
   const dateDePrevention = new Date(req.body.dateDePrevention);
   const etat = req.body.etat === 0 ? 'Coming' : 'Ongoing';
 
+  let imageFileName = null;
+
+  // Vérifier si un fichier a été téléchargé
+  if (req.file) {
+      imageFileName = req.file.filename;
+  }
 
   information.create({
-  titre:req.body.titre,
-  typeCatastrophe:req.body.typeCatastrophe,
-  idUser:req.body.idUser,
-  pays:req.body.pays,
-  region:req.body.region,
-  descriptionInformation:req.body.descriptionInformation,
-  image: `${req.file.filename}`,
-  dateDePrevention,
-  pourcentageFiabilite: req.body.pourcentageFiabilite,
-  etat,
+      titre: req.body.titre,
+      typeCatastrophe: req.body.typeCatastrophe,
+      idUser: req.body.idUser,
+      pays: req.body.pays,
+      region: req.body.region,
+      descriptionInformation: req.body.descriptionInformation,
+      image: imageFileName, // Utiliser le nom du fichier ou null
+      dateDePrevention,
+      pourcentageFiabilite: req.body.pourcentageFiabilite,
+      etat,
   })
-    .then((newInformation) => {
-      res.status(200).json(newInformation);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    });
+      .then((newInformation) => {
+          res.status(200).json(newInformation);
+      })
+      .catch((err) => {
+          res.status(500).json({ error: err });
+      });
 }
+
+
 
 export function UpdateInformation(req, res) {
   const { _id } = req.params;
