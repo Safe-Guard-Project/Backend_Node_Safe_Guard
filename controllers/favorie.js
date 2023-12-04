@@ -11,6 +11,15 @@ export function addFav(req, res) {
       res.status(500).json({ error: err });
     });
 }
+export function getAllFav(req, res) {
+ Favorie.find({})
+    .then((docs) => {
+      res.status(200).json(docs);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
 export function deleteAll(req, res) {
   Favorie.deleteMany({})
     .then((docs) => {
