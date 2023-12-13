@@ -11,6 +11,27 @@ export function addFav(req, res) {
       res.status(500).json({ error: err });
     });
 }
+export function getAllFav(req, res) {
+  Favorie.find({})
+  .then((docs) => {
+    res.status(200).json(docs);
+  })
+  .catch((err) => {
+    res.status(500).json({ error: err });
+  });
+}
+export function getFavWithCours(req, res) {
+  Favorie.find({})
+    .populate('idCoursProgramme')
+    .exec()
+    .then((courss) => {
+      res.status(200).json(courss);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
 export function deleteAll(req, res) {
   Favorie.deleteMany({})
     .then((docs) => {

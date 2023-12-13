@@ -16,10 +16,6 @@ const coursProgrammeSchema= new Schema(
             type: String,
             required: true
         },
-        idProgramme: {
-            type: Types.ObjectId,
-            ref: 'Programme'
-        }
     }, 
     {
         timestamps : true

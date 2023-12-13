@@ -79,6 +79,7 @@ const router = express.Router();
  */
 
 router.route('/cours').get(getProgrammesWithCours);
+
 router
   .route("/")
   .post(multer, AjouterProgramme)

@@ -2,8 +2,12 @@ import express from "express";
 import {
   addRessource,
   getAll,
+  deleteOnceRess,
+  deleteAll,
+  Update,
+  getOnceByType, getOneCours
 
-  deleteOnceRess,deleteAll,Update,  getOnceByType
+  //getCoursByType,
 } from "../controllers/coursProgramme.js";
 import multer from "../middlewares/multer-config.js";
 
@@ -54,7 +58,7 @@ const router = express.Router();
  *         description: Bad request. Check the request body.
  *       '500':
  *         description: Internal server error.
- * 
+ *
  *   get:
  *     summary: Get all courses.
  *     responses:
@@ -73,7 +77,7 @@ const router = express.Router();
  *                 idProgramme: "programme_id_1"
  *       '500':
  *         description: Internal server error.
- * 
+ *
  *   delete:
  *     summary: Delete all courses.
  *     responses:
@@ -83,11 +87,14 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
+
 router.route("/").post(multer, addRessource).get(getAll).delete(deleteAll);
+
 router
   .route("/:Type")
   .get(getOnceByType)
-router.route("/:_id").delete(deleteOnceRess).put(multer,Update);
 
+//router.route("/:programmeId/:coursType").get(getCoursByType);
+router.route("/:_id").delete(deleteOnceRess).put(multer, Update).get(getOneCours);
 
 export default router;
