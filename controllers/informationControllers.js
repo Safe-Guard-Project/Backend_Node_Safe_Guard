@@ -1,10 +1,12 @@
 
 import information from '../models/information.js';
+import cloudinary  from '../middlewares/cloudinary.js'
 //lesfonctions
 
-export function AjouterInformation(req, res) {
+export async function AjouterInformation(req, res) {
   const dateDePrevention = new Date(req.body.dateDePrevention);
   const etat = req.body.etat === 0 ? 'Coming' : 'Ongoing';
+  const cloudinaryy = await cloudinary.uploader.upload(req.file.path, { resource_type: 'auto' });
 
   let imageFileName = null;
 
@@ -20,7 +22,7 @@ export function AjouterInformation(req, res) {
       pays: req.body.pays,
       region: req.body.region,
       descriptionInformation: req.body.descriptionInformation,
-      image: imageFileName, // Utiliser le nom du fichier ou null
+      image: cloudinaryy.secure_url,
       dateDePrevention,
       pourcentageFiabilite: req.body.pourcentageFiabilite,
       etat,
