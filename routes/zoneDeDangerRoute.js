@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import {  getZoneDeDangersByCatastropheRadius,createZoneDeDanger, getZoneDeDangers, updateZoneDeDanger, deleteZoneDeDanger ,getZoneDeDangerById } from '../controllers/zoneDeDangerController.js';
+import {  deleteZoneDeDangerswithlatitudeAndlongitude,getZoneDeDangersByCatastropheRadius,createZoneDeDanger, getZoneDeDangers, updateZoneDeDanger, deleteZoneDeDanger ,getZoneDeDangerById } from '../controllers/zoneDeDangerController.js';
 
 const router = express.Router();
 
@@ -20,7 +20,8 @@ router.route('/:id')
 router.route('/getZoneDeDangersByCatastropheRadius')
     .get(getZoneDeDangersByCatastropheRadius);
     
-
+router.route('/deleteZoneDeDangerswithlatitudeAndlongitude/:latitudeDeZoneDanger/:longitudeDeZoneDanger')
+    .delete(deleteZoneDeDangerswithlatitudeAndlongitude);
 
 export default router;
 
