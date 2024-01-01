@@ -43,6 +43,20 @@ export function updateZoneDeDanger(req, res) {
         });
 }
 
+export function deleteZoneDeDangerswithlatitudeAndlongitude(req, res) {
+    const { latitudeDeZoneDanger, longitudeDeZoneDanger } = req.body;
+    zoneDeDanger.deleteOne({
+        latitudeDeZoneDanger: latitudeDeZoneDanger,
+        longitudeDeZoneDanger: longitudeDeZoneDanger
+    })
+        .then(() => {
+            res.status(200).send();
+        })
+        .catch((err) => {
+            res.status(400).json({ error: err.message });
+        });
+}
+
 
 export function deleteZoneDeDanger(req, res) {
     zoneDeDanger.findByIdAndDelete(req.params.id)
