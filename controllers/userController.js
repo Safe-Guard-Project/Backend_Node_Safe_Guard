@@ -195,7 +195,7 @@ export async function authenticateAdmin(req, res) {
     const apiKey = process.env.SECRET_KEY;
     const token = jwt.sign(payload, apiKey);
 
-    return res.status(200).send({ token, apiKey, _id: payload._id });
+    return res.status(200).send({ token, apiKey, _id: admin._id, UserName: admin.UserName, email: admin.email, numeroTel: admin.numeroTel });
   } catch (error) {
     console.error(error);
     return res.status(500).send('Internal server error');
@@ -422,7 +422,7 @@ export async function banUser(req, res) {
 
     user.status = 'banned';
 
-    await user.save();
+    await user.save(); 
 
     res.status(200).json({ message: 'User banned successfully', data: user });
   } catch (error) {
@@ -742,21 +742,19 @@ export async function displayUserProfile(req, res) {
   try {
     const userIdToFind = req.params._id;
 
+    // Check if userIdToFind is undefined
+    if (!userIdToFind) {
+      return res.status(400).json({ error: 'User ID is missing in the request' });
+    }
+
     console.log('User ID to find:', userIdToFind);
 
     const user = await User.findOne({ "_id": userIdToFind });
 
     if (user) {
-      const userProfile = {
-        _id: user._id,
-        UserName: user.UserName,
-        email: user.email,
-        // Add other fields as needed
-      };
-      if (req.files && req.files.length > 0) {
-        userProfile.image = req.files[0].path;  // Save the first uploaded file path
-      }
-      res.status(200).json({ data: userProfile });
+      
+
+      return res.status(200).send({ _id: user._id, UserName: user.UserName, email: user.email, numeroTel: user.numeroTel });
     } else {
       res.status(404).json({ error: "User not found" });
     }
@@ -764,6 +762,7 @@ export async function displayUserProfile(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
+
 
 // Middleware function for single image upload
 export function uploadSingleImage(req, res, next) {

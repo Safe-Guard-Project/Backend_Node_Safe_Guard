@@ -273,10 +273,10 @@ router
  *       500:
  *         description: Internal server error
  */
-router.route('/profile/{_id}')
+router
+.route('/profile/:_id')
 .get(displayUserProfile)
 .patch(modifyUserProfile);
-
 
 
 /**
@@ -408,7 +408,7 @@ router
  *               error: Internal server error
  */
 
-router.post('/ban/:_id', banUser);
+router.post(' /ban/:_id', banUser);
 
 
 /**
