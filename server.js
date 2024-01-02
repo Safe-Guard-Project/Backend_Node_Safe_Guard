@@ -77,7 +77,7 @@ app.use('/alert', alertRoutes);
 app.use('/catastrophe', catastropheRoutes);
 app.use('/api', usgsRoutes);
 
-app.use('/user', userRoutes);
+app.use('/user', userRoutes); 
 app.use('/safeG', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(notFoundError);

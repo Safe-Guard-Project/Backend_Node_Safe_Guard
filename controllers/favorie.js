@@ -51,3 +51,32 @@ export function deleteOnceFav(req, res) {
       res.status(500).json({ error: err });
     });
 }
+export async function getStatistiqueNombreFavorisParTypeCours(req, res) {
+  try {
+    const favoris = await Favorie.find().populate('idCoursProgramme');
+    const statistiques = {};
+
+    favoris.forEach((favori) => {
+      const typeCours = favori.idCoursProgramme ? favori.idCoursProgramme.Type : null;
+
+      if (typeCours) {
+        if (statistiques[typeCours]) {
+          statistiques[typeCours]++;
+        } else {
+          statistiques[typeCours] = 1;
+        }
+      }
+    });
+
+    const statistiquesArray = Object.entries(statistiques);
+
+    statistiquesArray.sort((a, b) => b[1] - a[1]);
+    const troisPlusFavoris = statistiquesArray.slice(0, 3);
+    const statistiquesFinale = Object.fromEntries(troisPlusFavoris);
+
+    return res.status(200).json(statistiquesFinale);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des statistiques :', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}

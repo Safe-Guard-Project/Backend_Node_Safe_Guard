@@ -87,12 +87,12 @@ export function getOnceProg(req, res) {
       res.status(500).json({ error: err });
     })
 }
-
+/*
 export function UpdateProg(req, res) {
   const { _id } = req.params;
   const updatedProgrammeData = req.body;
   if (req.file) {
-    updatedProgrammeData.image = `${req.protocol}://${req.get("host")}/img/${req.file.filename}`// Mettez à jour le chemin de l'image si une nouvelle image est fournie
+    updatedProgrammeData.image = `${req.protocol}://${req.get("host")}/img/${req.file.filename}`
   }
     
   Programme.findByIdAndUpdate(_id, updatedProgrammeData )
@@ -103,7 +103,63 @@ export function UpdateProg(req, res) {
       res.status(500).json({ error: err });
     });
 }
+*/
 
+export async function UpdateProg(req, res) {
+  try {
+    const { _id } = req.params;
+    const updatedProgrammeData = req.body;
+
+    if (req.file) {
+      const cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, { resource_type: 'auto' });
+      updatedProgrammeData.image = cloudinaryResponse.secure_url;
+    }
+
+    if (!Array.isArray(updatedProgrammeData.cours)) {
+      return res.status(400).json({ error: "Le champ 'cours' doit être un tableau d'IDs de cours." });
+    }
+
+    const coursExistants = await Promise.all(updatedProgrammeData.cours.map(async (coursId) => {
+      const coursExiste = await CoursProgramme.findById(coursId);
+      return coursExiste !== null;
+    }));
+
+    if (coursExistants.includes(false)) {
+      return res.status(400).json({ error: "Certains cours n'existent pas." });
+    }
+
+    const updatedProg = await Programme.findByIdAndUpdate(_id, updatedProgrammeData, { new: true });
+
+    if (!updatedProg) {
+      return res.status(404).json({ error: "Programme non trouvé." });
+    }
+
+    res.status(200).json(updatedProg);
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Une erreur inattendue s'est produite." });
+  }
+}
+
+/*
+export async function UpdateProg(req, res) {
+  const { _id } = req.params;
+  const updatedCoursData = req.body;
+
+  try {
+    if (req.file) {
+    
+      const cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, { resource_type: 'auto' });
+      updatedCoursData.image = cloudinaryResponse.secure_url;
+    }
+
+    const updatedCours = await Programme.findByIdAndUpdate(_id, updatedCoursData, { new: true });
+
+    res.status(200).json(updatedCours);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || 'Erreur lors de la mise à jour de la ressource.' });
+  }
+}*/
 export function deleteAll(req, res) {
   Programme.deleteMany({})
     .then((docs) => {
@@ -122,4 +178,37 @@ export function deleteOnceProg(req, res) {
     .catch((err) => {
       res.status(500).json({ error: err });
     });
+}
+export async function getStatistiqueNombreCoursParProgramme(req, res) {
+  try {
+    const programmes = await Programme.find().populate("cours");
+    const statistiques = [];
+
+    programmes.forEach((programme) => {
+      const nombreCours = programme.cours.length;
+      statistiques.push({
+        programmeId: programme._id,
+        titreProgramme: programme.Titre,
+        nombreCours: nombreCours,
+      });
+    });
+
+    return res.status(200).json(statistiques);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des statistiques :", error);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
+}
+
+// Add this function at the bottom of your existing code
+export async function getTotalNombreProgrammes(req, res) {
+  try {
+    const programmes = await Programme.find();
+    const totalNumberOfPrograms = programmes.length;
+
+    return res.status(200).json({ totalNumberOfPrograms });
+  } catch (error) {
+    console.error("Erreur lors du calcul du nombre total de programmes :", error);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
 }

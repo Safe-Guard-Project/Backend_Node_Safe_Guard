@@ -19,6 +19,9 @@ import {
   createAccountClient,
   authenticateClient,
   authenticateAdmin,
+  sendCredentialsByEmail,
+  uploadSingleImage,
+  banUser
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -115,10 +118,11 @@ router.route('/displayNearbyFriends').get(displayNearbyFriends);
  *       500:
  *         description: Internal server error
  */
+
 router.route('/registerClient').post(createAccountClient);
 
 
-
+router.route('/registerAdmin').post(createAccountAdmin)
 
   /**
  * @swagger
@@ -161,6 +165,7 @@ router.route('/registerClient').post(createAccountClient);
  */
 router.route('/loginClient').post(authenticateClient);
 
+router.post('/sendCredentialsByEmail', sendCredentialsByEmail);
 
 router
 .route('/loginAdmin')
@@ -360,6 +365,52 @@ router
 .post(recoverPasswordByPhoneNumber);
 
 
+
+/**
+ * @swagger
+ * /user/ban/{_id}:
+ *   post:
+ *     summary: Ban a user
+ *     description: Ban a user by setting the isBanned field to true.
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - name: _id
+ *         in: path
+ *         description: The ID of the user to be banned.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User banned successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: User banned successfully
+ *               data:
+ *                 _id: "5f74b934e3e8d20318c0c0d1"
+ *                 UserName: "exampleUser"
+ *                 email: "example@example.com"
+ *                 Role: "client"
+ *                 isBanned: true
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: User not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: Internal server error
+ */
+
+router.post('/ban/:_id', banUser);
+
+
 /**
  * @swagger
  * /user/verifyOTPFromTwilio:
@@ -480,7 +531,7 @@ router.route('/addNearbyFriend').post(addNearbyFriend);
  */
 router.route('/deleteAccount/:userId').delete(deleteAccount);
 
-
+router.route('/upload').post(uploadSingleImage);
 
 
 

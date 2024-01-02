@@ -5,8 +5,8 @@ import {
   getOnceProg,
   UpdateProg,
   deleteOnceProg,
-  deleteAll,
-  getProgrammesWithCours,
+  deleteAll,getTotalNombreProgrammes,
+  getProgrammesWithCours,getStatistiqueNombreCoursParProgramme
 } from "../controllers/programme.js";
 import multer from "../middlewares/multer-config.js";
 
@@ -85,55 +85,12 @@ router
   .post(multer, AjouterProgramme)
   .get(getAllProg)
   .delete(deleteAll);
-
-/**
- * @swagger
- * /programme/{Titre}:
- *   get:
- *     summary: Get a specific program by title.
- *     parameters:
- *       - in: path
- *         name: Titre
- *         required: true
- *         description: The title of the program to retrieve.
- *         schema:
- *           type: string
- *     responses:
- *       '200':
- *         description: Successful retrieval of the specified program.
- *         content:
- *           application/json:
- *             example:
- *               Titre: "Program Title"
- *               descriptionProgramme: "Program Description"
- *               image: "https://example.com/image.jpg"
- *       '404':
- *         description: Program not found.
- *       '500':
- *         description: Internal server error.
- *   
- *   delete:
- *     summary: Delete a specific program by title.
- *     parameters:
- *       - in: path
- *         name: Titre
- *         required: true
- *         description: The title of the program to delete.
- *         schema:
- *           type: string
- *     responses:
- *       '200':
- *         description: Successful deletion of the specified program.
- *       '404':
- *         description: Program not found.
- *       '500':
- *         description: Internal server error.
- */
-
 router
   .route("/:Titre")
   .get(getOnceProg)
   .delete(deleteOnceProg);
+  router.route("/stat").get(getStatistiqueNombreCoursParProgramme);
+ 
   /**
  * @swagger
  * /programme/{_id}:
@@ -171,6 +128,6 @@ router
  */
 
 router.route("/:_id").put(multer,UpdateProg);
-
+router.route('/total/nb').get(getTotalNombreProgrammes);
 
 export default router;

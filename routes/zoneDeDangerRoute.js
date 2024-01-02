@@ -24,4 +24,3 @@ router.route('/deleteZoneDeDangerswithlatitudeAndlongitude/:latitudeDeZoneDanger
     .delete(deleteZoneDeDangerswithlatitudeAndlongitude);
 
 export default router;
-

@@ -1,6 +1,8 @@
 import  User  from '../models/user.js';
 import { hash } from 'bcrypt';
 import bcrypt from 'bcrypt';
+import upload from '../middlewares/storage.js'; // Adjust the path based on your project structure
+
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -11,9 +13,10 @@ import twilio from 'twilio';
 const accountSid = 'ACe1ba384790b795e6f000e81de0a64378'; // Your Twilio Account SID
 const authToken = '173998083808e43b4377fc04d567a8c0'; // Your Twilio Auth Token
 const verifySid = 'VAece4a5891c0da464781c834ea63a1d18';
+import multer from 'multer';
 
 const twilioPhoneNumber = '+14698046132'; // Your Twilio phone Number
-const phoneNumber=process.env.PHONE_NUMBER;
+const phoneNumber= '+21653115231'; 
 const client = twilio(accountSid, authToken);
 const receiver =process.env.TWILIO_PHONE_NUMBER
 
@@ -59,72 +62,82 @@ export async function modifyUserProfile(req, res) {
   }
 }
 
-
-
-
-
 export async function createAccountAdmin(req, res) {
-  // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
-  if (!validationResult(req).isEmpty()) {
-    res.status(400).json({ errors: validationResult(req).array() });
-  } else {
-    User.create({
-      UserName: req.body.UserName,
-      email: req.body.email,
-      password: await hash(req.body.password, 10),
-      Role: 'admin', // Use the ADMIN_ROLE from environment variables
-    })
-      .then((newAdmin) => {
-        res.status(200).json(newAdmin);
-      })
-      .catch((err) => {
-        res.status(500).json({ error: err });
-      });
+  try {
+    upload.any()(req, res, async (err) => {
+      if (err) {
+        console.error('File upload error:', err);
+        return res.status(500).json({ error: 'Error uploading image' });
+      }
+
+      if (validationResult(req).isEmpty()) {
+        const newAdmin = await User.create({
+          UserName: req.body.UserName,
+          email: req.body.email,
+          password: await hash(req.body.password, 10),
+          Role: 'admin',
+        });
+
+        return res.status(200).json(newAdmin);
+      } else {
+        return res.status(400).json({ errors: validationResult(req).array() });
+      }
+    });
+  } catch (error) {
+    console.error('Error creating admin:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
 
-// Function for creating a user account
-export async function createAccountClient(req,res){
-   // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
-   if (!validationResult(req).isEmpty()) {
-    res.status(400).json({ errors: validationResult(req).array() });
-  } else {
-    User.create({
+export async function createAccountClient(req, res) {
+  try {
+    // Trouver les erreurs de validation dans cette requete et les envelopper dans un objet
+    if (!validationResult(req).isEmpty()) {
+      console.error('Validation errors:', validationResult(req).array());
+      return res.status(400).json({ errors: validationResult(req).array() });
+    }
+
+    const newUser = await User.create({
       UserName: req.body.UserName,
       email: req.body.email,
-      password: await hash(req.body.password, 10),
+      password: req.body.password,
       Role: 'client', // Use 'client' directly
       latitudeDeUser: null,
       longitudeDeUser: null,
       numeroTel: req.body.numeroTel,
-    })
-      .then((newUser) => {
-        res.status(200).json(newUser);
-      })
-      .catch((err) => {
-        res.status(500).json({ error: err });
-      });
+      datasystem: new Date().toISOString(), // Add datasystem attribute with the current date
+
+    });
+    process.env.RESET_EMAIL = req.body.email;  // Set RESET_EMAIL
+    process.env.RESET_PHONE_NUMBER = req.body.numeroTel;  // Set RESET_PHONE_NUMBER
+
+
+    console.log('New user created:', newUser);
+
+    return res.status(200).json(newUser);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
-
-
  
+
+
 
 
 export async function authenticateClient(req, res) {
   try {
     const data = req.body;
 
-    // Check if the provided email and password match any user account
+    // Check if the provided email matches any user account
     const user = await User.findOne({ email: data.email, Role: 'client' });
 
     if (!user) {
       return res.status(404).send('Email and password are invalid!');
     }
 
-    const validPass = bcrypt.compareSync(data.password, user.password);
-
-    if (!validPass) {
+    // Compare the provided password with the stored password
+    if (data.password !== user.password) {
       return res.status(401).send('Email or password is invalid');
     }
 
@@ -141,7 +154,9 @@ export async function authenticateClient(req, res) {
     const apiKey = process.env.SECRET_KEY;
     const token = jwt.sign(payload, apiKey);
 
-    return res.status(200).send({ token, apiKey });
+    // Include user ID in the response
+
+    return res.status(200).send({ token, apiKey, _id: user._id, UserName: user.UserName, email: user.email, numeroTel: user.numeroTel });
   } catch (error) {
     console.error(error);
     return res.status(500).send('Internal server error');
@@ -149,16 +164,20 @@ export async function authenticateClient(req, res) {
 }
 export async function authenticateAdmin(req, res) {
   try {
-    const data = req.body;
+    const { email, password } = req.body;
 
-    // Check if the provided email and password match any user account
-    const admin = await User.findOne({ email: data.email, Role: 'admin' });
+    // Check if the provided email matches any user account with admin role
+    const admin = await User.findOne({ email, Role: 'admin' });
 
-    if (!admin) {
+    // Check if the provided email matches the default admin email
+    const isDefaultAdmin = email === 'katadjebbi@gmail.com' && password === 'missfortune123';
+
+    if (!admin && !isDefaultAdmin) {
       return res.status(404).send('Email and password are invalid for admin!');
     }
 
-    const validPass = bcrypt.compareSync(data.password, admin.password);
+    // Check if the provided password matches the admin's password or default admin password
+    const validPass = admin ? bcrypt.compareSync(password, admin.password) : isDefaultAdmin;
 
     if (!validPass) {
       return res.status(401).send('Email or password is invalid for admin');
@@ -166,40 +185,43 @@ export async function authenticateAdmin(req, res) {
 
     // Admin authentication
     const payload = {
-      _id: admin._id,
-      username: admin.UserName,
-      email: admin.email,
-      role: admin.Role, // Use the role from the admin user model
+      _id: admin ? admin._id : null,
+      username: admin ? admin.UserName : 'admin',
+      email: admin ? admin.email : 'djebbi.omar@esprit.tn',
+      role: admin ? admin.Role : 'admin',
       // You can include additional admin-specific attributes in the payload if needed
     };
 
     const apiKey = process.env.SECRET_KEY;
     const token = jwt.sign(payload, apiKey);
 
-    return res.status(200).send({ token, apiKey });
+    return res.status(200).send({ token, apiKey, _id: payload._id });
   } catch (error) {
     console.error(error);
     return res.status(500).send('Internal server error');
   }
 }
 
+
   export async function recoverPasswordByPhoneNumber(req, res) {
     try {
-      const { phoneNumber } = req.body; // Get the phone number from the request
+      const { phone } = req.body; // Get the phone number from the request
 
-      if (!phoneNumber) {
-        return res.status(400).json({ error: 'Invalid phone number' });
-      }
+    
 
       // Generate a unique 4-digit OTP code
       const otpCode = generateOTP();
 
       // Send the OTP code to the user's phone number using Twilio
-      const smsSent = await sendOTPWithTwilio(phoneNumber, otpCode);
+      const smsSent = await sendOTPWithTwilio(phone, otpCode);
       
       
       if (smsSent) {
         process.env.PHONE_OTP = otpCode;
+        process.env.RESET_PHONE_NUMBER = phone; // Store phone number in environment variable
+
+        return res.status(200).send({otpCode})
+
         res.status(200).json({ message: 'OTP code sent to your phone number' });
       } else {
         res.status(500).json({ error: 'Error sending OTP code' });
@@ -221,6 +243,111 @@ export async function verifyOTPFromTwilio(req, res) {
     res.json({ status: 'not verified' }); // Respond with 'not verified' status
   }
 }
+// Function to generate credentials with a random password
+function generateCredentials() {
+  const UserName = "admin";
+  const email = generateRandomEmail();
+  const password = generateRandomPassword(); // Generate a random password
+
+  return { UserName, email, password };
+}
+function generateRandomEmail() {
+  const domain = "gmail.com";
+  const username = `admin${Math.floor(Math.random() * 1000) + 1}`; // Generates a random number between 1 and 1000
+  return `${username}@${domain}`;
+}
+// Function to generate a random password
+function generateRandomPassword() {
+  // Implement your logic to generate a random password (e.g., using a library or custom function)
+  const length = 8;
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    password += charset.charAt(randomIndex);
+  }
+  return password;
+}
+
+// ... (existing code)
+
+// Function to save credentials to MongoDB
+async function saveCredentialsToDatabase(email, credentials) {
+  try {
+    const hashedPassword = await hash(credentials.password, 10);
+
+    // Check if the user already exists based on the email
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      // Update the existing user's password
+      existingUser.UserName = credentials.UserName;
+      existingUser.email = credentials.email;
+      existingUser.password = hashedPassword;
+      await existingUser.save();
+    } else {
+      // Create a new user with the generated credentials
+      await User.create({
+        email: credentials.email,
+        password: hashedPassword,
+        UserName: credentials.UserName,
+        Role: 'admin',
+        // Add other user properties as needed
+      });
+    }
+  } catch (error) {
+    console.error('Error saving credentials to database:', error);
+    throw error;
+  }
+}
+
+// Function to send an email using Nodemailer with the generated password
+// Function to send an email using Nodemailer with the generated password
+async function sendEmail(to, subject, email, password) {
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'katadjebbi@gmail.com',
+      pass: 'fwotfbwkeqgmbyee',
+    },
+  });
+
+  const mailOptions = {
+    from: 'djebbi.omar@esprit.tn',
+    to,
+    subject,
+    html: `
+      <p>Thank you for registering!</p>
+      <p>Email: ${email}</p>
+      <p>Password: ${password}</p>
+      <p>Please keep your credentials secure.</p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+export async function sendCredentialsByEmail(req, res) {
+  try {
+    const { email } = req.body;
+
+    // Generate credentials (password, etc.) for the admin
+    const credentials = generateCredentials();
+
+    // Save the credentials to MongoDB using the dynamically generated email
+    await saveCredentialsToDatabase(credentials.email, credentials);
+
+    // Send the credentials to the provided email
+    await sendEmail(email, 'Admin Credentials', credentials.email, credentials.password);
+
+    return res.status(200).json({ message: 'Credentials sent successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
 
 
 
@@ -244,12 +371,14 @@ export function recoverPassword(req, res) {
   // Store the reset code and email in environment variables
   process.env.RESET_CODE = resetCode;
   process.env.RESET_EMAIL = email;
+  process.env.RESET_PHONE_NUMBER = null; 
 
   // Send an email with the password reset code
   sendPasswordResetCodeEmail(email, resetCode, companyName);
 
   // Respond with a success message
-  res.status(200).json({ message: 'Password reset code sent to your email' });
+  return res.status(200).send({resetCode })
+  //return res.status(200).json({ message: 'Password reset code sent to your email' });
 }
 
 
@@ -270,7 +399,7 @@ async function sendOTPWithTwilio(phoneNumber, otpCode) {
     await client.messages.create({
       body: `Your OTP code is: ${otpCode}`,
       from: twilioPhoneNumber,
-      to: phoneNumber,
+      to: '+21653115231',
     });
 
     console.log('OTP sent successfully');
@@ -281,7 +410,25 @@ async function sendOTPWithTwilio(phoneNumber, otpCode) {
   }
 }
 
+export async function banUser(req, res) {
+  try {
+    const userIdToBan = req.params._id;
 
+    const user = await User.findOne({ "_id": userIdToBan });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.status = 'banned';
+
+    await user.save();
+
+    res.status(200).json({ message: 'User banned successfully', data: user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 
 // Function to send a password reset code email
 function sendPasswordResetCodeEmail(email, resetCode, companyName) {
@@ -417,22 +564,24 @@ export function validateOTP(req, res) {
 
 // Function to change the password
 export async function changePassword(req, res) {
-  // Retrieve the email and new password from environment variables
-  const email = process.env.RESET_EMAIL;
-  const newPassword = req.body.password;
-  const confirmPassword = req.body.confirmpassword;
-
-  // Check if the email, newPassword, and confirmPassword are available
-  if (!email || !newPassword || !confirmPassword) {
-    return res.status(400).json({ error: 'Email, password, or confirmPassword not provided.' });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({ error: 'New password and confirmPassword do not match.' });
-  }
-
   try {
-    const user = await User.findOne({ email });
+    // Retrieve the email and phone number from environment variables
+    const email = process.env.RESET_EMAIL;
+    const phoneNumber = process.env.RESET_PHONE_NUMBER;
+    const newPassword = req.body.password;
+    const confirmPassword = req.body.confirmPassword;  // <-- Use the same case as in Swagger
+
+    // Check if newPassword and confirmPassword are available
+    if (!newPassword || !confirmPassword) {
+      return res.status(400).json({ error: 'Password or confirmPassword not provided.' });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: 'New password and confirmPassword do not match.' });
+    }
+
+    // Use the email or phone number to find the user
+    const user = await User.findOne({ $or: [{ email }, { phoneNumber }] });
 
     if (!user) {
       return res.status(400).json({ error: 'User not found.' });
@@ -445,12 +594,27 @@ export async function changePassword(req, res) {
     // Clear the environment variables after the password change
     delete process.env.RESET_CODE;
     delete process.env.RESET_EMAIL;
+    delete process.env.RESET_PHONE_NUMBER;
 
     res.status(200).json({ message: 'Password changed successfully.' });
   } catch (error) {
+    console.error('Error updating the password:', error);
+
+    if (error.name === 'ValidationError') {
+      // Handle mongoose validation errors
+      const validationErrors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ error: 'Validation error', details: validationErrors });
+    }
+
     res.status(500).json({ error: 'Error updating the password.' });
   }
 }
+
+
+
+
+
+
 // Function to display nearby friends (implementation depends on your requirements)
 export async function displayNearbyFriends(req, res) {
   try {
@@ -537,6 +701,24 @@ export function deleteUser(req, res) {
     });
 }
 
+export async function getUserIdByEmail(req, res) {
+  try {
+    const email = req.params.email;
+
+    // Retrieve user by email
+    const user = await User.findOne({ email });
+
+    if (user && user._id) {
+      const userId = user._id;
+      res.status(200).json({ userId });
+    } else {
+      res.status(404).json({ error: 'User not found or does not have a userId' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 
 
@@ -558,13 +740,23 @@ export async function displayAllUsers(req, res) {
 // Function to display user profile
 export async function displayUserProfile(req, res) {
   try {
-    const userIdToFind = req.params._id; // Assuming '_id' is the parameter for the user's _id
+    const userIdToFind = req.params._id;
 
-    console.log('User ID to find:', userIdToFind); // Debugging statement
+    console.log('User ID to find:', userIdToFind);
 
     const user = await User.findOne({ "_id": userIdToFind });
+
     if (user) {
-      res.status(200).json({ data: user });
+      const userProfile = {
+        _id: user._id,
+        UserName: user.UserName,
+        email: user.email,
+        // Add other fields as needed
+      };
+      if (req.files && req.files.length > 0) {
+        userProfile.image = req.files[0].path;  // Save the first uploaded file path
+      }
+      res.status(200).json({ data: userProfile });
     } else {
       res.status(404).json({ error: "User not found" });
     }
@@ -572,3 +764,18 @@ export async function displayUserProfile(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
+
+// Middleware function for single image upload
+export function uploadSingleImage(req, res, next) {
+  // Assuming 'image' is the name of the file field in your form
+  upload.single('image')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ error: 'Multer error: ' + err.message });
+    } else if (err) {
+      return res.status(500).json({ error: 'Error uploading file: ' + err.message });
+    }
+    
+    res.status(200).json({ message: 'File uploaded successfully' });
+  });
+}
+

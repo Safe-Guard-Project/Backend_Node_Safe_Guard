@@ -4,7 +4,7 @@ import {
   getAllComment,
   getOnceComment,
   deleteAll,
-  deleteOnceComment,UpdateC
+  deleteOnceComment,UpdateC,getStatistiqueNombreCommentairesParTypeCours,getCommentbyIdCours
 } from "../controllers/commentairesProgramme.js";
 
 const router = express.Router();
@@ -79,6 +79,8 @@ const router = express.Router();
  */
 
 router.route("/").post(addComment).get(getAllComment).delete(deleteAll);
+router.route("/stat").get(getStatistiqueNombreCommentairesParTypeCours);
+router.route("/:idCoursProgramme").get(getCommentbyIdCours);
 router.route("/:_id").get(getOnceComment).delete(deleteOnceComment).put(UpdateC);
 
 export default router;

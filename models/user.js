@@ -22,9 +22,23 @@ import mongoose from 'mongoose';
             enum:  ['client', 'admin'],
             required: true,
         },
+        image : {
+            
+            type: String,
+             default :'null'
+         },
         latitudeDeUser: Number,
         longitudeDeUser: Number,
         numeroTel: String,
+        status: {
+            type: String,
+            enum: ['active', 'banned'],
+            default: 'active',
+          },
+        datasystem: {
+            type: Date,
+            default: Date.now // Use the current date as the default value
+          },
     }, 
     {
     timestamps : true
